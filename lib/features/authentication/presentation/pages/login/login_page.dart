@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:story_app1/common/button_widget.dart';
 import 'package:story_app1/common/widgets/logo_widget.dart';
 import 'package:story_app1/common/widgets/text_field_widget.dart';
+import 'package:story_app1/common/widgets/title_widget.dart';
 import 'package:story_app1/core/theme_manager/style_manager.dart';
 import 'package:story_app1/core/theme_manager/values_manager.dart';
 
@@ -23,15 +25,13 @@ class LoginPage extends StatelessWidget {
             children: [
               LogoWidget(),
               SizedBox(height: AppPadding.p100),
-              Text(
-                'Log in to your\nAccount to continue',
-                style: getGrey900TextStyle(),
-              ),
+              TitleWidget(title: 'Log in to your\nAccount to continue'),
               SizedBox(height: AppPadding.p50),
               TextFieldWidget(hintText: 'Your Email', prefixIcon: Icons.email),
               SizedBox(height: AppPadding.p20),
               TextFieldWidget(
                 hintText: 'Your Password',
+                isPassword: true,
                 prefixIcon: Icons.lock,
               ),
               SizedBox(height: 40),
@@ -40,7 +40,7 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: AppPadding.p60),
               Center(
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () => context.go('/login/register'),
                   child: Text(
                     'Create New Account',
                     style: getGrey600TextStyle(),

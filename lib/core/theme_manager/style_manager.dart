@@ -44,6 +44,7 @@ TextStyle getGrey900TextStyle({
 TextStyle getGrey600TextStyle({
   double fontSize = FontSizeManager.f16,
   FontWeight fontWeight = FontWeightManager.medium,
+  
 }) {
   return _getTextStyle(
     fontSize,
@@ -64,3 +65,4 @@ TextStyle getWhiteTextStyle({
     ColorsManager.white,
   );
 }
+

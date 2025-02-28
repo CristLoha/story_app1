@@ -8,6 +8,11 @@ class ColorsManager {
   static Color grey600 = HexColor.fromHex('#696B76');
   static Color white = HexColor.fromHex('#FFFFFF');
   static Color softWhite = HexColor.fromHex('#CCEBEAEA');
+  static Color green = HexColor.fromHex('#4CAF50');
+  static Color red = HexColor.fromHex('#FF5252');
+  static Color orangeMedium = HexColor.fromHex('#FF9800');
+
+
 }
 
 extension HexColor on Color {
