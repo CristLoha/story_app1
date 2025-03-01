@@ -17,11 +17,39 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(milliseconds: 300), () {
+      _focusNode.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<PostProvider>();
+    final isButtonDisabled =
+        _controller.text.isEmpty || provider.imagePath == null;
+
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: ColorsManager.white),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          color: ColorsManager.white,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         centerTitle: false,
         title: Text(
           'Create Post',
@@ -30,85 +58,97 @@ class _PostPageState extends State<PostPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: AppPadding.p50,
+          vertical: AppPadding.p16,
           horizontal: AppPadding.p24,
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CircleAvatar(
-                    radius: 24,
-                    backgroundImage: NetworkImage(
-                      'https://picsum.photos/200/200',
-                    ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const CircleAvatar(
+                  radius: 24,
+                  backgroundImage: NetworkImage(
+                    'https://picsum.photos/200/200',
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Jhon',
-                          style: getGrey900TextStyle().copyWith(
-                            fontSize: AppSize.s18,
-                            fontWeight: FontWeight.bold,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Jhon',
+                        style: getGrey900TextStyle().copyWith(
+                          fontSize: AppSize.s18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Stack(
+                        children: [
+                          Positioned(
+                            left: 0,
+                            top: 10,
+                            bottom: 0,
+                            child: Container(width: 3, color: Colors.grey),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Stack(
-                          children: [
-                            Positioned(
-                              left: 0,
-                              top: 10,
-                              bottom: 0,
-                              child: Container(width: 3, color: Colors.grey),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: TextField(
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
-                                decoration: InputDecoration(
-                                  hintText: "What's on your mind?",
-                                  border: InputBorder.none,
-                                ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: TextField(
+                              controller: _controller,
+                              focusNode: _focusNode,
+                              maxLines: null,
+                              keyboardType: TextInputType.multiline,
+                              decoration: InputDecoration(
+                                hintText: "What's on your mind?",
+                                border: InputBorder.none,
                               ),
-                            ),
-                          ],
-                        ),
-                        context.watch<PostProvider>().imagePath == null
-                            ? SizedBox()
-                            : _showImage(),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.camera_alt, color: Colors.grey),
-                              onPressed: () {
-                                // Aksi untuk membuka kamera
+                              onChanged: (text) {
+                                setState(() {});
                               },
                             ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.photo_library,
-                                color: Colors.grey,
-                              ),
-                              onPressed: () => _onGalleryView(),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                      provider.imagePath == null ? SizedBox() : _showImage(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.photo_library, color: Colors.grey),
+                            onPressed: () => _onGalleryView(),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.camera_alt, color: Colors.grey),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+          right: 10,
+        ),
+        child: FloatingActionButton(
+          onPressed:
+              isButtonDisabled
+                  ? null
+                  : () {
+                    // Implementasi post di sini
+                  },
+          backgroundColor:
+              isButtonDisabled ? Colors.grey : ColorsManager.primary,
+          child: Icon(Icons.send, color: Colors.white),
         ),
       ),
     );
@@ -123,7 +163,7 @@ class _PostPageState extends State<PostPage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12), // Radius sudut gambar
+            borderRadius: BorderRadius.circular(12),
             child: Image.file(File(imagePath.toString()), fit: BoxFit.cover),
           ),
         ),
@@ -131,10 +171,13 @@ class _PostPageState extends State<PostPage> {
           top: 15,
           right: 20,
           child: GestureDetector(
-            onTap: () => provider.setImagePath(null), // Menghapus gambar
+            onTap: () {
+              provider.setImagePath(null);
+              setState(() {});
+            },
             child: Container(
               decoration: BoxDecoration(
-                color: ColorsManager.grey900, // Background tombol
+                color: ColorsManager.grey900,
                 shape: BoxShape.circle,
               ),
               padding: const EdgeInsets.all(6),
@@ -149,22 +192,20 @@ class _PostPageState extends State<PostPage> {
   _onGalleryView() async {
     final provider = context.read<PostProvider>();
 
-    /// todo-gallery-06: check if MacOS and Linux
+    /// Cek apakah MacOS atau Linux
     final isMacOS = defaultTargetPlatform == TargetPlatform.macOS;
     final isLinux = defaultTargetPlatform == TargetPlatform.linux;
     if (isMacOS || isLinux) return;
 
-    /// todo-gallery-01: initial ImagePicker class
+    /// Ambil gambar dari galeri
     final picker = ImagePicker();
-
-    /// todo-gallery-02: pick image from gallery
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    /// todo-gallery-03: check the result and update the image
+    /// Update state jika gambar terpilih
     if (pickedFile != null) {
-      /// todo-gallery-05: update the state, imagePath and imageFile
       provider.setImageFile(pickedFile);
       provider.setImagePath(pickedFile.path);
+      setState(() {});
     }
   }
 }
