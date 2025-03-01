@@ -75,7 +75,10 @@ class RegisterPage extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 40),
-              ButtonWidget(title: 'Register'),
+              ButtonWidget(
+                title: 'Register',
+                onPressed: () => context.go('/home'),
+              ),
 
               SizedBox(height: 10),
               Row(
