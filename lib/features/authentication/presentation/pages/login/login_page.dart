@@ -27,15 +27,23 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: AppPadding.p100),
               TitleWidget(title: 'Log in to your\nAccount to continue'),
               SizedBox(height: AppPadding.p50),
-              TextFieldWidget(hintText: 'Your Email', prefixIcon: Icons.email),
+              TextFieldWidget(
+                hintText: 'Your Email',
+                prefixIcon: Icons.email,
+                keyboardType: TextInputType.emailAddress,
+              ),
               SizedBox(height: AppPadding.p20),
               TextFieldWidget(
                 hintText: 'Your Password',
                 isPassword: true,
                 prefixIcon: Icons.lock,
+                keyboardType: TextInputType.visiblePassword,
               ),
-              SizedBox(height: 40),
-              ButtonWidget(title: 'Login'),
+              SizedBox(height: AppPadding.p20),
+              ButtonWidget(
+                title: 'Login',
+                onPressed: () => context.go('/home'),
+              ),
 
               SizedBox(height: AppPadding.p60),
               Center(

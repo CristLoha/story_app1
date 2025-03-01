@@ -5,13 +5,14 @@ import 'package:story_app1/core/theme_manager/values_manager.dart';
 
 class ButtonWidget extends StatelessWidget {
   final String title;
-  const ButtonWidget({required this.title, super.key});
+  final Function()? onPressed;
+  const ButtonWidget({required this.title, super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorsManager.primary,
           foregroundColor: ColorsManager.white,

@@ -33,8 +33,9 @@ class TextFieldWidget extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             filled: true,
+            
             hintStyle: getGrey900TextStyle(
-              fontSize: FontSizeManager.f12,
+              fontSize: FontSizeManager.f14,
               fontWeight: FontWeightManager.regular,
             ),
             prefixIcon: Icon(prefixIcon, color: ColorsManager.grey900),

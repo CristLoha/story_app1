@@ -10,5 +10,6 @@ ThemeData getApplicationThemeData() {
       elevation: 0,
     ),
     fontFamily: FontFamilyConstant.fontFamily,
+    iconTheme: IconThemeData(color: ColorsManager.white),
   );
 }
