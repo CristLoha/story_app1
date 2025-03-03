@@ -75,7 +75,7 @@ class _PostPageState extends State<CreatePostPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TitleNameWidget(title: "Jhon"),
+                        TitleNameWidget(userName: "Jhon"),
 
                         SizedBox(height: AppMargin.m5),
                         PostFieldWidget(
