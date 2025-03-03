@@ -11,8 +11,12 @@ class ColorsManager {
   static Color green = HexColor.fromHex('#4CAF50');
   static Color red = HexColor.fromHex('#FF5252');
   static Color orangeMedium = HexColor.fromHex('#FF9800');
-
-
+  static Color grey300 = HexColor.fromHex("#E0E0E0");
+  static Color like = Colors.blue;
+  static Color love = Colors.red;
+  static Color care = Colors.orange;
+  static Color haha = Colors.amber;
+  static Color wow = Colors.amber;
 }
 
 extension HexColor on Color {
