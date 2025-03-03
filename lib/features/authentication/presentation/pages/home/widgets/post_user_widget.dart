@@ -8,19 +8,22 @@ import 'package:story_app1/core/theme_manager/style_manager.dart';
 import 'package:story_app1/core/theme_manager/values_manager.dart';
 import 'package:story_app1/features/authentication/presentation/pages/home/widgets/icon_react_widget.dart';
 import 'package:story_app1/features/authentication/presentation/pages/post/widgets/title_name_widget.dart';
-import 'package:story_app1/providers/home_provider.dart';
+import 'package:story_app1/providers/post_provider.dart';
 
-class PostWidget extends StatelessWidget {
+class PostUserWidget extends StatelessWidget {
+  final String postId;
+
   final String urlImageUser;
   final String urlImagePost;
   final String caption;
   final String userName;
   final String time;
-  final bool isFirstPost; // Menandai apakah ini postingan pertama
-  final bool isLastPost; // Menandai apakah ini postingan terakhir
+  final bool isFirstPost;
+  final bool isLastPost;
 
-  const PostWidget({
+  const PostUserWidget({
     super.key,
+    required this.postId,
     required this.urlImageUser,
     required this.urlImagePost,
     required this.userName,
@@ -32,7 +35,7 @@ class PostWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeProvider = Provider.of<HomeProvider>(context);
+    final postProvider = Provider.of<PostProvider>(context);
 
     final List<Reaction<String>> reactions = [
       Reaction<String>(
@@ -73,7 +76,6 @@ class PostWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Postingan dengan Caption
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: AppPadding.p20,
@@ -83,9 +85,9 @@ class PostWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  spacing: AppMargin.m10,
                   children: [
                     CircleImageWidget(url: urlImageUser, radius: 24),
+                    SizedBox(width: AppMargin.m10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -97,9 +99,7 @@ class PostWidget extends StatelessWidget {
                 ),
                 SizedBox(height: AppMargin.m10),
                 GestureDetector(
-                  onTap: () {
-                    homeProvider.toggleExpanded(); // Toggle ekspansi teks
-                  },
+                  onTap: () => postProvider.toggleExpanded(postId),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -107,23 +107,21 @@ class PostWidget extends StatelessWidget {
                         child: Text(
                           caption,
                           style: getGrey900TextStyle(
-                            fontSize: FontSizeManager.f16,
+                            fontSize: FontSizeManager.f18,
                             fontWeight: FontWeightManager.regular,
                           ),
-                          maxLines: homeProvider.isExpanded ? null : 1,
+                          maxLines: postProvider.isExpanded(postId) ? null : 1,
                           overflow:
-                              homeProvider.isExpanded
+                              postProvider.isExpanded(postId)
                                   ? null
                                   : TextOverflow.ellipsis,
                         ),
                       ),
-                      if (!homeProvider.isExpanded)
+                      if (!postProvider.isExpanded(postId))
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: GestureDetector(
-                            onTap: () {
-                              homeProvider.toggleExpanded(); // Expand teks
-                            },
+                            onTap: () => postProvider.toggleExpanded(postId),
                             child: Text(
                               "See More",
                               style: TextStyle(
@@ -139,8 +137,6 @@ class PostWidget extends StatelessWidget {
               ],
             ),
           ),
-
-          // Gambar Postingan
           Container(
             height: 340,
             decoration: BoxDecoration(
@@ -151,17 +147,15 @@ class PostWidget extends StatelessWidget {
             ),
           ),
           SizedBox(height: 10),
-
-          // Reaksi
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: AppPadding.p20,
               vertical: AppPadding.p10,
             ),
             child: ReactionButton<String>(
-              key: ValueKey(homeProvider.selectedReaction?.value),
+              key: ValueKey(postProvider.getSelectedReaction(postId)?.value),
               onReactionChanged: (Reaction<String>? reaction) {
-                homeProvider.updateSelectedReaction(reaction); // Update reaksi
+                postProvider.updateSelectedReaction(postId, reaction);
               },
               reactions: reactions,
               placeholder: Reaction<String>(
@@ -169,8 +163,8 @@ class PostWidget extends StatelessWidget {
                 icon: Row(
                   children: [
                     Image.asset(
-                      homeProvider.selectedReaction?.value != null
-                          ? 'assets/icon/${homeProvider.selectedReaction!.value}.png'
+                      postProvider.getSelectedReaction(postId)?.value != null
+                          ? 'assets/icon/${postProvider.getSelectedReaction(postId)!.value}.png'
                           : 'assets/icon/like_default.png',
                       width: 30,
                       height: 30,
@@ -179,16 +173,22 @@ class PostWidget extends StatelessWidget {
                     AnimatedSwitcher(
                       duration: Duration(milliseconds: 300),
                       child: Text(
-                        homeProvider.selectedReaction?.value != null
-                            ? homeProvider.selectedReaction!.value![0]
+                        postProvider.getSelectedReaction(postId)?.value != null
+                            ? postProvider
+                                    .getSelectedReaction(postId)!
+                                    .value![0]
                                     .toUpperCase() +
-                                homeProvider.selectedReaction!.value!
+                                postProvider
+                                    .getSelectedReaction(postId)!
+                                    .value!
                                     .substring(1)
                                     .toLowerCase()
                             : "Like",
-                        key: ValueKey(homeProvider.selectedReaction?.value),
+                        key: ValueKey(
+                          postProvider.getSelectedReaction(postId)?.value,
+                        ),
                         style: _getTextStyleByReaction(
-                          homeProvider.selectedReaction,
+                          postProvider.getSelectedReaction(postId),
                         ),
                       ),
                     ),
@@ -196,7 +196,7 @@ class PostWidget extends StatelessWidget {
                 ),
               ),
               selectedReaction:
-                  homeProvider.selectedReaction ?? reactions.first,
+                  postProvider.getSelectedReaction(postId) ?? reactions.first,
               itemSize: const Size(40, 40),
             ),
           ),
@@ -207,7 +207,6 @@ class PostWidget extends StatelessWidget {
 
   TextStyle _getTextStyleByReaction(Reaction<String>? reaction) {
     if (reaction == null) return getGrey900TextStyle();
-
     Map<String, Color> reactionColors = {
       "like": ColorsManager.like,
       "love": ColorsManager.love,
@@ -215,7 +214,6 @@ class PostWidget extends StatelessWidget {
       "haha": ColorsManager.haha,
       "wow": ColorsManager.wow,
     };
-
     return getGrey900TextStyle().copyWith(
       color: reactionColors[reaction.value] ?? ColorsManager.grey900,
       fontWeight: FontWeight.bold,
