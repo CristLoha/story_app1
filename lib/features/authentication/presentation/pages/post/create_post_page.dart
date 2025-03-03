@@ -2,21 +2,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:story_app1/common/widgets/circle_image_widget.dart';
 import 'package:story_app1/core/theme_manager/color_manager.dart';
 import 'package:story_app1/core/theme_manager/style_manager.dart';
 import 'package:story_app1/core/theme_manager/values_manager.dart';
+import 'package:story_app1/features/authentication/presentation/pages/post/widgets/media_picker_button.dart';
+import 'package:story_app1/features/authentication/presentation/pages/post/widgets/post_button_widget.dart';
 import 'package:story_app1/features/authentication/presentation/pages/post/widgets/post_field_widget.dart';
 import 'package:story_app1/features/authentication/presentation/pages/post/widgets/show_image_widget.dart';
+import 'package:story_app1/features/authentication/presentation/pages/post/widgets/title_name_widget.dart';
 import 'package:story_app1/providers/post_provider.dart';
 
-class PostPage extends StatefulWidget {
-  const PostPage({super.key});
+class CreatePostPage extends StatefulWidget {
+  const CreatePostPage({super.key});
 
   @override
-  State<PostPage> createState() => _PostPageState();
+  State<CreatePostPage> createState() => _PostPageState();
 }
 
-class _PostPageState extends State<PostPage> {
+class _PostPageState extends State<CreatePostPage> {
   final TextEditingController _descpritionC = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
@@ -66,23 +70,12 @@ class _PostPageState extends State<PostPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: AppMargin.m10,
                 children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundImage: NetworkImage(
-                      'https://picsum.photos/200/200',
-                    ),
-                  ),
-
+                  CircleImageWidget(url: 'https://picsum.photos/200/200'),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Jhon',
-                          style: getGrey900TextStyle().copyWith(
-                            fontSize: AppSize.s18,
-                          ),
-                        ),
+                        TitleNameWidget(title: "Jhon"),
 
                         SizedBox(height: AppMargin.m5),
                         PostFieldWidget(
@@ -92,24 +85,9 @@ class _PostPageState extends State<PostPage> {
                         postProvider.imagePath == null
                             ? SizedBox()
                             : ShowImageWidget(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            IconButton(
-                              onPressed: () => _onGalleryView(),
-                              icon: Icon(
-                                Icons.photo_library,
-                                color: ColorsManager.grey500,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.camera_alt,
-                                color: ColorsManager.grey500,
-                              ),
-                            ),
-                          ],
+                        MediaPickerButtons(
+                          onGalleryTap: _onGalleryView,
+                          onCameraTap: _onCameraView,
                         ),
                       ],
                     ),
@@ -120,17 +98,8 @@ class _PostPageState extends State<PostPage> {
           ),
         ),
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom + 10,
-          right: 10,
-        ),
-        child: FloatingActionButton(
-          onPressed: isButtondisabled ? null : () {},
-          backgroundColor:
-              isButtondisabled ? ColorsManager.grey500 : ColorsManager.primary,
-          child: Icon(Icons.send, color: ColorsManager.white),
-        ),
+      floatingActionButton: PostButtonWidget(
+        isButtondisabled: isButtondisabled,
       ),
     );
   }
@@ -144,6 +113,24 @@ class _PostPageState extends State<PostPage> {
 
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      postProvider.setImageFile(pickedFile);
+      postProvider.setImagePath(pickedFile.path);
+    }
+  }
+
+  _onCameraView() async {
+    final postProvider = context.read<PostProvider>();
+
+    final isAndroid = defaultTargetPlatform == TargetPlatform.android;
+    final isiOS = defaultTargetPlatform == TargetPlatform.iOS;
+    final isNotMobile = !(isAndroid || isiOS);
+    if (isNotMobile) return;
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+    );
 
     if (pickedFile != null) {
       postProvider.setImageFile(pickedFile);
