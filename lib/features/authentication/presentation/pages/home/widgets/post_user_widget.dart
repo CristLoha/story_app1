@@ -36,7 +36,6 @@ class PostUserWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final postProvider = Provider.of<PostProvider>(context);
-
     final List<Reaction<String>> reactions = [
       Reaction<String>(
         value: 'like',
@@ -98,41 +97,67 @@ class PostUserWidget extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: AppMargin.m10),
-                GestureDetector(
-                  onTap: () => postProvider.toggleExpanded(postId),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          caption,
-                          style: getGrey900TextStyle(
-                            fontSize: FontSizeManager.f18,
-                            fontWeight: FontWeightManager.regular,
-                          ),
-                          maxLines: postProvider.isExpanded(postId) ? null : 1,
-                          overflow:
-                              postProvider.isExpanded(postId)
-                                  ? null
-                                  : TextOverflow.ellipsis,
-                        ),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final textSpan = TextSpan(
+                      text: caption,
+                      style: getGrey900TextStyle(
+                        fontSize: FontSizeManager.f18,
+                        fontWeight: FontWeightManager.regular,
                       ),
-                      if (!postProvider.isExpanded(postId))
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: GestureDetector(
-                            onTap: () => postProvider.toggleExpanded(postId),
+                    );
+                    final textPainter = TextPainter(
+                      text: textSpan,
+                      maxLines: 1,
+                      textDirection: TextDirection.ltr,
+                    )..layout(maxWidth: constraints.maxWidth);
+
+                    // Cek apakah teks lebih dari 30 karakter ATAU melebihi 1 baris
+                    final isLongText =
+                        caption.length > 30 || textPainter.didExceedMaxLines;
+
+                    return GestureDetector(
+                      onTap: () => postProvider.toggleExpanded(postId),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(
                             child: Text(
-                              "See More",
-                              style: TextStyle(
-                                color: ColorsManager.grey500,
-                                fontWeight: FontWeight.bold,
+                              caption,
+                              style: getGrey900TextStyle(
+                                fontSize: FontSizeManager.f18,
+                                fontWeight: FontWeightManager.regular,
                               ),
+                              maxLines:
+                                  postProvider.isExpanded(postId) ? null : 1,
+                              overflow:
+                                  postProvider.isExpanded(postId)
+                                      ? null
+                                      : TextOverflow.ellipsis,
                             ),
                           ),
-                        ),
-                    ],
-                  ),
+                          if (isLongText &&
+                              !postProvider.isExpanded(
+                                postId,
+                              )) // Paksa "See More" kalau teks panjang
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: GestureDetector(
+                                onTap:
+                                    () => postProvider.toggleExpanded(postId),
+                                child: Text(
+                                  "See More",
+                                  style: TextStyle(
+                                    color: ColorsManager.grey500,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
