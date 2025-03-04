@@ -3,6 +3,9 @@ import 'package:story_app1/features/authentication/presentation/pages/home/home_
 import 'package:story_app1/features/authentication/presentation/pages/login/login_page.dart';
 import 'package:story_app1/features/authentication/presentation/pages/post/create_post_page.dart';
 import 'package:story_app1/features/authentication/presentation/pages/register/register_page.dart';
+import 'package:story_app1/services/sesion_manager.dart';
+
+final SesionManager _sessionManager = SesionManager();
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
@@ -14,11 +17,25 @@ final GoRouter appRouter = GoRouter(
         GoRoute(path: 'register', builder: (context, state) => RegisterPage()),
       ],
     ),
-
-    GoRoute(path: '/home', builder: (context, state) => HomePage(),
-    routes: <RouteBase>[
+    GoRoute(
+      path: '/home',
+      builder: (context, state) => HomePage(),
+      routes: <RouteBase>[
         GoRoute(path: 'post', builder: (context, state) => CreatePostPage()),
       ],
     ),
   ],
+  redirect: (context, state) async {
+    final isLoggedIn = await _sessionManager.isLoggedIn();
+
+    if (!isLoggedIn && state.uri.toString() != '/login') {
+      return '/login';
+    }
+    // Jika pengguna sudah login dan mencoba mengakses halaman login
+    if (isLoggedIn && state.uri.toString() == '/login') {
+      return '/home';
+    }
+
+    return null;
+  },
 );

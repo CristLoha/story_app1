@@ -7,63 +7,146 @@ import 'package:story_app1/core/theme_manager/style_manager.dart';
 import 'package:story_app1/core/theme_manager/values_manager.dart';
 import 'package:story_app1/features/authentication/data/model/post_model.dart';
 import 'package:story_app1/features/authentication/presentation/pages/home/widgets/post_user_widget.dart';
+import 'package:story_app1/services/sesion_manager.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Dummy Data
+    final sesionManager = SesionManager();
     final List<String> quotes = [
       "Believe in yourself and all that you are. ✨",
       "The only way to do great work is to love what you do. 💡",
-      "Success is not final, failure is not fatal. 🔥",
-      "Dream big and dare to fail. 🚀",
-      "Every moment is a fresh beginning. 🌅",
-      "Happiness depends upon ourselves. 😊",
-      "Be yourself; everyone else is already taken. 🎭",
-      "Turn your wounds into wisdom. 🌿",
-      "Do what you can, with what you have, where you are. 🏆",
-      "What we think, we become. 🌟",
     ];
-
-    final List<String> usernames = [
-      "Michael",
-      "Sophia",
-      "Daniel",
-      "Emma",
-      "James",
-      "Olivia",
-      "Alexander",
-      "Ava",
-      "Benjamin",
-      "Charlotte",
-    ];
-
+    final List<String> usernames = ["Michael", "Sophia"];
     final List<PostModel> dummyData = List.generate(
-      10,
+      2,
       (index) => PostModel(
         image: "https://picsum.photos/200/300?random=${index + 1}",
-        text: quotes[index], // Ambil quote sesuai index
-        username: usernames[index], // Pakai nama manusia
+        text: quotes[index],
+        username: usernames[index],
         time: "${(index + 1) * 5} minutes ago",
       ),
     );
+
     return Scaffold(
       appBar: AppBar(
+        centerTitle: false,
         title: Text(
           'Snap Story',
           style: getWhiteTextStyle().copyWith(fontSize: AppSize.s30),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.more_vert),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                ),
+                builder: (context) {
+                  return Container(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.language, color: Colors.black54),
+                          title: Text("Ganti Bahasa"),
+                          onTap: () {
+                            Navigator.pop(context);
+                            // Tambahkan aksi untuk mengubah bahasa
+                          },
+                        ),
+                        Divider(height: 1, color: ColorsManager.white),
+                        ListTile(
+                          leading: Icon(Icons.logout, color: Colors.red),
+                          title: Text("Log out"),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder:
+                                  (context) => AlertDialog(
+                                    title: Text("Log out of your account?"),
+                                    contentPadding: EdgeInsets.only(
+                                      top: 20,
+                                      left: 24,
+                                      right: 24,
+                                    ),
+                                    actions: [
+                                      Column(
+                                        children: [
+                                          Divider(
+                                            height: 1,
+                                            color: Colors.grey[300],
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              final router = GoRouter.of(
+                                                context,
+                                              ); // Simpan router sebelum async gap
+
+                                              await sesionManager
+                                                  .clearSession(); // Hapus sesi
+
+                                              if (context.mounted) {
+                                                router.go(
+                                                  '/login',
+                                                ); // Navigasi ke login
+                                              }
+                                            },
+                                            style: TextButton.styleFrom(
+                                              foregroundColor:
+                                                  Colors.red, // Warna merah
+                                              textStyle: TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            child: Text("Log out"),
+                                          ),
+                                          Divider(
+                                            height: 1,
+                                            color: Colors.grey[300],
+                                          ), // Garis pemisah
+                                          TextButton(
+                                            onPressed:
+                                                () => Navigator.pop(
+                                                  context,
+                                                ), // Tutup dialog
+                                            style: TextButton.styleFrom(
+                                              foregroundColor:
+                                                  Colors.black, // Warna default
+                                              textStyle: TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            child: Text("Cancel"),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: ListView(
+        padding: EdgeInsets.only(top: AppPadding.p16),
         children: [
-          // Tombol Posting
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: AppPadding.p24,
               right: AppPadding.p24,
-              top: AppPadding.p50,
             ),
             child: Row(
               children: [
@@ -96,9 +179,7 @@ class HomePage extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 30),
-
-          // Postingan Utama
+          SizedBox(height: 16),
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),

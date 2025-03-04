@@ -41,10 +41,21 @@ TextStyle getGrey900TextStyle({
   );
 }
 
+TextStyle getRedTextStyle({
+  double fontSize = FontSizeManager.f14,
+  FontWeight fontWeight = FontWeightManager.semiBold,
+}) {
+  return _getTextStyle(
+    fontSize,
+    FontFamilyConstant.fontFamily,
+    fontWeight,
+    ColorsManager.secondary,
+  );
+}
+
 TextStyle getGrey600TextStyle({
   double fontSize = FontSizeManager.f16,
   FontWeight fontWeight = FontWeightManager.medium,
-  
 }) {
   return _getTextStyle(
     fontSize,
@@ -65,4 +76,3 @@ TextStyle getWhiteTextStyle({
     ColorsManager.white,
   );
 }
-

@@ -12,11 +12,13 @@ class TextFieldWidget extends StatelessWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final Function(String)? onChanged;
+  final TextEditingController? controller;
   const TextFieldWidget({
     required this.hintText,
     required this.prefixIcon,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
+    this.controller,
     this.onChanged,
     super.key,
   });
@@ -26,6 +28,7 @@ class TextFieldWidget extends StatelessWidget {
     return Consumer<PasswordProvider>(
       builder: (context, passProvider, child) {
         return TextField(
+          controller: controller,
           obscureText: isPassword ? passProvider.isObscure : false,
           onChanged: onChanged,
           keyboardType: keyboardType,
@@ -33,7 +36,7 @@ class TextFieldWidget extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             filled: true,
-            
+
             hintStyle: getGrey900TextStyle(
               fontSize: FontSizeManager.f14,
               fontWeight: FontWeightManager.regular,
