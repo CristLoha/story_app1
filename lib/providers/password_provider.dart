@@ -19,7 +19,7 @@ class PasswordProvider extends ChangeNotifier {
     if (password.isEmpty) {
       _passwordStrength = '';
       _strengthColor = ColorsManager.grey900;
-    } else if (password.length < 6) {
+    } else if (password.length <= 8) {
       _passwordStrength = 'Weak';
       _strengthColor = ColorsManager.red;
     } else if (RegExp(r'^(?=.*[A-Z])(?=.*\d)').hasMatch(password)) {
