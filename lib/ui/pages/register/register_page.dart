@@ -8,7 +8,7 @@ import 'package:story_app1/ui/widgets/title_widget.dart';
 import 'package:story_app1/utils/theme_manager/font_manager.dart';
 import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
-import 'package:story_app1/providers/password_provider.dart';
+import 'package:story_app1/providers/login/password_provider.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});

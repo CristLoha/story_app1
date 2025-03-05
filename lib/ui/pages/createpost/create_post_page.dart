@@ -6,12 +6,12 @@ import 'package:story_app1/ui/widgets/circle_image_widget.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
 import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
-import 'package:story_app1/ui/pages/post/widgets/media_picker_button.dart';
-import 'package:story_app1/ui/pages/post/widgets/post_button_widget.dart';
-import 'package:story_app1/ui/pages/post/widgets/post_field_widget.dart';
-import 'package:story_app1/ui/pages/post/widgets/show_image_widget.dart';
-import 'package:story_app1/ui/pages/post/widgets/title_name_widget.dart';
-import 'package:story_app1/providers/post_provider.dart';
+import 'package:story_app1/ui/pages/createpost/widgets/media_picker_button.dart';
+import 'package:story_app1/ui/pages/createpost/widgets/post_button_widget.dart';
+import 'package:story_app1/ui/pages/createpost/widgets/post_field_widget.dart';
+import 'package:story_app1/ui/pages/createpost/widgets/show_image_widget.dart';
+import 'package:story_app1/ui/pages/createpost/widgets/title_name_widget.dart';
+import 'package:story_app1/providers/createpost/post_provider.dart';
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});

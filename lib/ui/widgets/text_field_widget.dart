@@ -4,7 +4,7 @@ import 'package:story_app1/utils/theme_manager/color_manager.dart';
 import 'package:story_app1/utils/theme_manager/font_manager.dart';
 import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
-import 'package:story_app1/providers/password_provider.dart';
+import 'package:story_app1/providers/login/password_provider.dart';
 
 class TextFieldWidget extends StatelessWidget {
   final String hintText;

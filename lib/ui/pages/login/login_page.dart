@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app1/ui/widgets/button_widget.dart';
 import 'package:story_app1/ui/widgets/logo_widget.dart';
 import 'package:story_app1/ui/widgets/text_field_widget.dart';
 import 'package:story_app1/ui/widgets/title_widget.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
+import 'package:story_app1/utils/theme_manager/font_manager.dart';
 import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
 import 'package:story_app1/static/auth_state.dart';
-import 'package:story_app1/providers/auth_provider.dart';
+import 'package:story_app1/providers/login/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -51,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
                   if (state is AuthErrorState) {
                     // Tampilkan dialog error jika ada pesan error dari API
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      _showErrorDialog(context, state.message);
+                      _showErrorSnackbar(context, state.message);
                     });
                   }
                   return _buildLoginForm(context.read<AuthProvider>());
@@ -96,6 +98,7 @@ class _LoginPageState extends State<LoginPage> {
         SizedBox(height: AppPadding.p20),
         ButtonWidget(
           title: 'Login',
+          color: ColorsManager.primary,
           isLoading: isLoading,
           onPressed:
               isLoading
@@ -113,49 +116,83 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  /// Menampilkan dialog error dengan pesan dari API
-  void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Tidak bisa ditutup dengan klik di luar
-      builder: (context) {
-        return ScaleTransition(
-          scale: CurvedAnimation(
-            parent: ModalRoute.of(context)!.animation!,
-            curve: Curves.easeInOut,
-          ),
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Column(
-              children: [
-                Icon(Icons.error_outline, color: Colors.red, size: 50),
-                const SizedBox(height: 10),
-                Text('Oops! Something went wrong', style: getRedTextStyle()),
-              ],
-            ),
-            content: Text(
-              message,
-              style: getGrey900TextStyle(),
-              textAlign: TextAlign.center,
-            ),
-            actionsAlignment: MainAxisAlignment.center,
-            actions: [
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorsManager.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+  void _showErrorSnackbar(BuildContext context, String message) {
+    final overlay = Overlay.of(context);
+    final controller = AnimationController(
+      vsync: Navigator.of(context),
+      duration: const Duration(milliseconds: 300),
+    );
+    final animation = CurvedAnimation(
+      parent: controller,
+      curve: Curves.easeOut,
+    );
+
+    final overlayEntry = OverlayEntry(
+      builder:
+          (context) => Positioned(
+            top: 60,
+            left: 20,
+            right: 20,
+            child: FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, -1),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorsManager.secondary,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorsManager.grey900,
+                          blurRadius: 5,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Lottie.asset(
+                          'assets/lottie/error_animation.json',
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            message,
+                            style: getRedTextStyle().copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeightManager.semiBold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                child: Text('OK', style: TextStyle(color: Colors.white)),
               ),
-            ],
+            ),
           ),
-        );
-      },
     );
+
+    overlay.insert(overlayEntry);
+    controller.forward();
+
+    Future.delayed(const Duration(seconds: 3), () async {
+      await controller.reverse();
+      overlayEntry.remove();
+    });
   }
 }
