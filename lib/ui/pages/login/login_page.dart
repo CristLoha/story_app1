@@ -51,7 +51,6 @@ class _LoginPageState extends State<LoginPage> {
                 selector: (context, provider) => provider.state,
                 builder: (context, state, child) {
                   if (state is AuthErrorState) {
-                    // Tampilkan dialog error jika ada pesan error dari API
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       _showErrorSnackbar(context, state.message);
                     });

@@ -18,6 +18,7 @@ class AppPage extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StoriesListProvider()),
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
         ChangeNotifierProvider(create: (_) => PostProvider()),
+  
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

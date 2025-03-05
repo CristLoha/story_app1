@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app1/providers/home/stories_list_provider.dart';
 import 'package:story_app1/static/stories_result_state.dart';
@@ -48,7 +49,14 @@ class _HomePageState extends State<HomePage> {
       body: Consumer<StoriesListProvider>(
         builder: (context, provider, child) {
           if (provider.resultState is StoriesLoadingState) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: Lottie.asset(
+                'assets/lottie/loading_animation.json',
+                width: 130,
+                height: 130,
+                fit: BoxFit.cover,
+              ),
+            );
           } else if (provider.resultState is StoriesErrorState) {
             return Center(
               child: Column(
