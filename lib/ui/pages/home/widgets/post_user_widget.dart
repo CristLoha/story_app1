@@ -139,10 +139,7 @@ class PostUserWidget extends StatelessWidget {
                                       : TextOverflow.ellipsis,
                             ),
                           ),
-                          if (isLongText &&
-                              !postProvider.isExpanded(
-                                postId,
-                              )) // Paksa "See More" kalau teks panjang
+                          if (isLongText && !postProvider.isExpanded(postId))
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: GestureDetector(
@@ -167,10 +164,12 @@ class PostUserWidget extends StatelessWidget {
           ),
           Container(
             height: 340,
+            width: double.infinity,
             decoration: BoxDecoration(
+              color: ColorsManager.softWhite,
               image: DecorationImage(
                 image: NetworkImage(urlImagePost),
-                fit: BoxFit.cover,
+                fit: BoxFit.fitWidth,
               ),
             ),
           ),

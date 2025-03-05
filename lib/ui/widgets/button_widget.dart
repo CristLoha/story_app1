@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
 import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
@@ -35,16 +36,13 @@ class ButtonWidget extends StatelessWidget {
               ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: ColorsManager.white,
-                      strokeWidth: 2,
-                    ),
+                  Lottie.asset(
+                    'assets/lottie/white_loading_animation.json',
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
                   ),
-                  SizedBox(width: 10),
-                  Text('Loading', style: getWhiteTextStyle()),
+                  Text('Loading...', style: getWhiteTextStyle()),
                 ],
               )
               : Text(title, style: getWhiteTextStyle()),
