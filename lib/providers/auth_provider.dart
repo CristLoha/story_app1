@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:story_app1/features/authentication/data/api/api_service.dart';
-import 'package:story_app1/features/authentication/data/state/auth_state.dart';
+import 'package:story_app1/data/api/api_service.dart';
+import 'package:story_app1/static/auth_state.dart';
 import 'package:story_app1/services/sesion_manager.dart';
 
 class AuthProvider with ChangeNotifier {

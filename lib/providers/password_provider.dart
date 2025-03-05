@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:story_app1/core/theme_manager/color_manager.dart';
+import 'package:story_app1/utils/theme_manager/color_manager.dart';
 
 class PasswordProvider extends ChangeNotifier {
   bool _isObscured = true;

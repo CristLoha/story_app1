@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:story_app1/core/routes/app_route.dart';
-import 'package:story_app1/core/theme_manager/theme_data_manager.dart';
+import 'package:story_app1/static/app_route.dart';
+import 'package:story_app1/utils/theme_manager/theme_data_manager.dart';
 import 'package:story_app1/providers/auth_provider.dart';
 import 'package:story_app1/providers/home_provider.dart';
 import 'package:story_app1/providers/password_provider.dart';
