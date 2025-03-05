@@ -8,7 +8,7 @@ import 'package:story_app1/services/sesion_manager.dart';
 
 class AuthProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
-  final SesionManager _sesionManager = SesionManager();
+  final SessionManager _sesionManager = SessionManager();
 
   AuthState _state = AuthInitialState();
   AuthState get state => _state;

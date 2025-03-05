@@ -5,7 +5,7 @@ import 'package:story_app1/utils/theme_manager/color_manager.dart';
 import 'package:story_app1/utils/theme_manager/font_manager.dart';
 import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
-import 'package:story_app1/providers/post_provider.dart';
+import 'package:story_app1/providers/createpost/post_provider.dart';
 
 class PostFieldWidget extends StatelessWidget {
   const PostFieldWidget({

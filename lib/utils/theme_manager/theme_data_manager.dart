@@ -8,8 +8,8 @@ ThemeData getApplicationThemeData() {
     appBarTheme: AppBarTheme(
       backgroundColor: ColorsManager.primary,
       elevation: 0,
+      iconTheme: IconThemeData(color: ColorsManager.white),
     ),
     fontFamily: FontFamilyConstant.fontFamily,
-    iconTheme: IconThemeData(color: ColorsManager.white),
   );
 }

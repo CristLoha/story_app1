@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
-import 'package:story_app1/providers/post_provider.dart';
+import 'package:story_app1/providers/createpost/post_provider.dart';
 
 class ShowImageWidget extends StatelessWidget {
   const ShowImageWidget({super.key});

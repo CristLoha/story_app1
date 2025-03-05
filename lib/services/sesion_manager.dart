@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SesionManager {
+class SessionManager {
   static const String _tokenKey = "TOKEN";
   static const String _userIdKey = "USER_ID";
   static const String _nameKey = "NAME";

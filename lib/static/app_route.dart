@@ -1,11 +1,11 @@
 import 'package:go_router/go_router.dart';
 import 'package:story_app1/ui/pages/home/home_page.dart';
 import 'package:story_app1/ui/pages/login/login_page.dart';
-import 'package:story_app1/ui/pages/post/create_post_page.dart';
+import 'package:story_app1/ui/pages/createpost/create_post_page.dart';
 import 'package:story_app1/ui/pages/register/register_page.dart';
 import 'package:story_app1/services/sesion_manager.dart';
 
-final SesionManager _sessionManager = SesionManager();
+final SessionManager _sessionManager = SessionManager();
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
@@ -31,7 +31,7 @@ final GoRouter appRouter = GoRouter(
     if (!isLoggedIn && state.uri.toString() != '/login') {
       return '/login';
     }
-    // Jika pengguna sudah login dan mencoba mengakses halaman login
+
     if (isLoggedIn && state.uri.toString() == '/login') {
       return '/home';
     }

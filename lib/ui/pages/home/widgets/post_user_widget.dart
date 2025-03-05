@@ -7,8 +7,9 @@ import 'package:story_app1/utils/theme_manager/font_manager.dart';
 import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
 import 'package:story_app1/ui/pages/home/widgets/icon_react_widget.dart';
-import 'package:story_app1/ui/pages/post/widgets/title_name_widget.dart';
-import 'package:story_app1/providers/post_provider.dart';
+import 'package:story_app1/ui/pages/createpost/widgets/title_name_widget.dart';
+import 'package:story_app1/providers/createpost/post_provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class PostUserWidget extends StatelessWidget {
   final String postId;
@@ -17,7 +18,7 @@ class PostUserWidget extends StatelessWidget {
   final String urlImagePost;
   final String caption;
   final String userName;
-  final String time;
+  final DateTime time;
   final bool isFirstPost;
   final bool isLastPost;
 
@@ -91,7 +92,10 @@ class PostUserWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TitleNameWidget(userName: userName),
-                        Text(time, style: getGrey600TextStyle()),
+                        Text(
+                          timeago.format(time, locale: 'en'),
+                          style: getGrey600TextStyle(),
+                        ),
                       ],
                     ),
                   ],
@@ -112,7 +116,6 @@ class PostUserWidget extends StatelessWidget {
                       textDirection: TextDirection.ltr,
                     )..layout(maxWidth: constraints.maxWidth);
 
-                    // Cek apakah teks lebih dari 30 karakter ATAU melebihi 1 baris
                     final isLongText =
                         caption.length > 30 || textPainter.didExceedMaxLines;
 
