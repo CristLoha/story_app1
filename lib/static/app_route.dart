@@ -6,7 +6,6 @@ import 'package:story_app1/ui/pages/register/register_page.dart';
 import 'package:story_app1/services/sesion_manager.dart';
 
 final SessionManager _sessionManager = SessionManager();
-
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
   routes: <RouteBase>[
@@ -28,7 +27,7 @@ final GoRouter appRouter = GoRouter(
   redirect: (context, state) async {
     final isLoggedIn = await _sessionManager.isLoggedIn();
 
-    if (!isLoggedIn && state.uri.toString() != '/login') {
+    if (!isLoggedIn && !state.uri.toString().startsWith('/login')) {
       return '/login';
     }
 

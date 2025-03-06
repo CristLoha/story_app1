@@ -7,6 +7,9 @@ import 'package:story_app1/providers/login/auth_provider.dart';
 import 'package:story_app1/providers/login/password_provider.dart';
 import 'package:story_app1/providers/createpost/post_provider.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 class AppPage extends StatelessWidget {
   const AppPage({super.key});
 
@@ -18,9 +21,9 @@ class AppPage extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StoriesListProvider()),
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
         ChangeNotifierProvider(create: (_) => PostProvider()),
-  
       ],
       child: MaterialApp.router(
+        scaffoldMessengerKey: scaffoldMessengerKey,
         debugShowCheckedModeBanner: false,
         title: 'Story App',
         theme: getApplicationThemeData(),
