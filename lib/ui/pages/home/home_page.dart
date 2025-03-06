@@ -63,6 +63,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text((provider.resultState as StoriesErrorState).message),
+                  SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () async {
                       final token = await _sesionManager.getToken();
