@@ -3,8 +3,13 @@ import 'package:story_app1/utils/theme_manager/color_manager.dart';
 
 class ShowImageWidget extends StatelessWidget {
   final String imageUrl;
+  final BoxFit boxFit;
 
-  const ShowImageWidget({super.key, required this.imageUrl});
+  const ShowImageWidget({
+    super.key,
+    required this.imageUrl,
+    this.boxFit = BoxFit.fitWidth,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +22,7 @@ class ShowImageWidget extends StatelessWidget {
               ? _buildErrorImage()
               : Image.network(
                 imageUrl,
-                fit: BoxFit.fitWidth,
+                fit: boxFit,
                 errorBuilder: (context, error, stackTrace) {
                   return _buildErrorImage();
                 },

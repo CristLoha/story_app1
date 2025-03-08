@@ -39,8 +39,10 @@ class _HomePageState extends State<HomePage> {
   void _resfreshStories() async {
     final token = await _sesionManager.getToken();
     if (token != null) {
-      final storyProvider = context.read<StoriesListProvider>();
-      await storyProvider.fetchStories(token);
+      if (mounted) {
+        final storyProvider = context.read<StoriesListProvider>();
+        await storyProvider.fetchStories(token);
+      }
     }
   }
 
@@ -158,6 +160,7 @@ class _HomePageState extends State<HomePage> {
                   itemCount: stories.length,
                   itemBuilder: (context, index) {
                     final post = stories[index];
+
                     return PostUserWidget(
                       urlImageUser:
                           "https://picsum.photos/200/200?random=$index",
@@ -166,6 +169,9 @@ class _HomePageState extends State<HomePage> {
                       caption: post.description,
                       time: post.createdAt,
                       postId: index.toString(),
+                      onTap: () {
+                        context.push('/home/detail', extra: post);
+                      },
                     );
                   },
                 ),

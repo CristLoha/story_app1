@@ -1,4 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:story_app1/data/model/story_model.dart';
+import 'package:story_app1/ui/pages/detail/detail_page.dart';
 import 'package:story_app1/ui/pages/home/home_page.dart';
 import 'package:story_app1/ui/pages/login/login_page.dart';
 import 'package:story_app1/ui/pages/createpost/upload_post_page.dart';
@@ -21,6 +23,13 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => HomePage(),
       routes: <RouteBase>[
         GoRoute(path: 'post', builder: (context, state) => UploadPostPage()),
+        GoRoute(
+          path: 'detail',
+          builder: (context, state) {
+            final story = state.extra as StoryModel;
+            return StoryDetailPage(story: story);
+          },
+        ),
       ],
     ),
   ],
