@@ -1,6 +1,5 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
@@ -55,8 +54,14 @@ class UploadPostProvider extends ChangeNotifier {
 
       Uint8List originalBytes = await imageFile!.readAsBytes();
 
-      List<int> resizedBytes = await resizeImage(originalBytes);
-      List<int> compressedBytes = await compressImage(resizedBytes);
+      List<int> resizedBytes = await compute(
+        _resizeImageIsolate,
+        originalBytes,
+      );
+      List<int> compressedBytes = await compute(
+        _compressImageIsolate,
+        resizedBytes,
+      );
 
       XFile processedFile = await saveTemporaryFile(
         Uint8List.fromList(compressedBytes),
@@ -105,7 +110,8 @@ class UploadPostProvider extends ChangeNotifier {
     }
   }
 
-  Future<List<int>> resizeImage(List<int> bytes) async {
+  /// 🏆 **Resize Image di Isolate agar UI tidak nge-freeze**
+  static List<int> _resizeImageIsolate(List<int> bytes) {
     if (bytes.length < 1000000) return bytes;
 
     final img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
@@ -127,7 +133,8 @@ class UploadPostProvider extends ChangeNotifier {
     return newBytes;
   }
 
-  Future<List<int>> compressImage(List<int> bytes) async {
+  /// 🏆 **Kompresi Image di Isolate agar UI tetap responsif**
+  static List<int> _compressImageIsolate(List<int> bytes) {
     if (bytes.length < 1000000) return bytes;
 
     final img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
