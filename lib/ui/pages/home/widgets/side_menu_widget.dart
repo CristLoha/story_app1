@@ -25,8 +25,24 @@ class SideMenuWidget extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.language),
             title: Text("Change Language"),
-            onTap: () => Navigator.pop(context),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder:
+                    (context) => AlertDialog(
+                      title: Text("Feature Unavailable"),
+                      content: Text("This feature is not available yet."),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text("OK"),
+                        ),
+                      ],
+                    ),
+              );
+            },
           ),
+
           ListTile(
             leading: Icon(Icons.logout, color: ColorsManager.secondary),
             title: Text("Log out"),
