@@ -34,7 +34,7 @@ class SideMenuWidget extends StatelessWidget {
                       content: Text("This feature is not available yet."),
                       actions: [
                         TextButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () => context.pop(),
                           child: Text("OK"),
                         ),
                       ],
@@ -80,7 +80,7 @@ class SideMenuWidget extends StatelessWidget {
                             Divider(height: 2, color: ColorsManager.grey300),
 
                             TextButton(
-                              onPressed: () => Navigator.pop(context),
+                              onPressed: () => context.pop(),
 
                               style: TextButton.styleFrom(
                                 foregroundColor: ColorsManager.grey900,

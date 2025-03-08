@@ -48,7 +48,7 @@ class _PostPageState extends State<UploadPostPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
           icon: Icon(Icons.close, color: ColorsManager.white),
         ),
         centerTitle: false,
