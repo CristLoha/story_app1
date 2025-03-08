@@ -35,15 +35,6 @@ class UploadPostProvider extends ChangeNotifier {
   }
 
   Future<void> uploadStory({double? lat, double? lon}) async {
-    if (imageFile == null || description.isEmpty) {
-      _state = UploadErrorState(
-        "Please select an image and enter a description.",
-      );
-      notifyListeners();
-      return;
-    }
-
-    // Cek koneksi internet dulu sebelum masuk loading state
     bool hasInternet = await _checkInternetConnection();
     if (!hasInternet) {
       _state = UploadErrorState(
