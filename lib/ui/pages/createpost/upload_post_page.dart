@@ -13,7 +13,6 @@ import 'package:story_app1/ui/pages/createpost/widgets/media_picker_button.dart'
 import 'package:story_app1/ui/pages/createpost/widgets/post_button_widget.dart';
 import 'package:story_app1/ui/pages/createpost/widgets/post_field_widget.dart';
 import 'package:story_app1/ui/pages/createpost/widgets/show_image_widget.dart';
-import 'package:story_app1/ui/pages/createpost/widgets/title_name_widget.dart';
 import 'package:story_app1/providers/uploadpost/upload_post_provider.dart';
 
 class UploadPostPage extends StatefulWidget {
@@ -76,8 +75,6 @@ class _PostPageState extends State<UploadPostPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TitleNameWidget(userName: "Jhon"),
-
                         SizedBox(height: AppMargin.m5),
                         PostFieldWidget(
                           descpritionC: _descpritionC,
