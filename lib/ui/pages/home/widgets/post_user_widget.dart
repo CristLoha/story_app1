@@ -14,7 +14,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class PostUserWidget extends StatelessWidget {
   final String postId;
-
+  final Function()? onTap;
   final String urlImageUser;
   final String urlImagePost;
   final String caption;
@@ -31,6 +31,7 @@ class PostUserWidget extends StatelessWidget {
     required this.userName,
     required this.caption,
     required this.time,
+    this.onTap,
     this.isFirstPost = false,
     this.isLastPost = false,
   });
@@ -161,13 +162,13 @@ class PostUserWidget extends StatelessWidget {
               ],
             ),
           ),
-          ShowImageWidget(imageUrl: urlImagePost),
+          GestureDetector(
+            onTap: onTap,
+            child: ShowImageWidget(imageUrl: urlImagePost),
+          ),
           SizedBox(height: 10),
           Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppPadding.p20,
-              vertical: AppPadding.p10,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: AppPadding.p20),
             child: ReactionButton<String>(
               key: ValueKey(provider.getSelectedReaction(postId)?.value),
               onReactionChanged: (Reaction<String>? reaction) {
@@ -216,6 +217,7 @@ class PostUserWidget extends StatelessWidget {
               itemSize: const Size(40, 40),
             ),
           ),
+          SizedBox(height: 10),
         ],
       ),
     );
