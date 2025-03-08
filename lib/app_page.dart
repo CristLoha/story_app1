@@ -22,7 +22,7 @@ class AppPage extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StoriesListProvider()),
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
         ChangeNotifierProvider(create: (_) => UploadPostProvider()),
-         ChangeNotifierProvider(create: (_) => PostInteractionProvider()),
+        ChangeNotifierProvider(create: (_) => PostInteractionProvider()),
       ],
       child: MaterialApp.router(
         scaffoldMessengerKey: scaffoldMessengerKey,

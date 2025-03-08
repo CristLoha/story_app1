@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:story_app1/data/model/login_response.dart';
 import 'package:story_app1/data/model/register_response.dart';
+import 'package:story_app1/data/model/stories_response.dart';
+import 'package:story_app1/data/model/upload_response.dart';
 
 class ApiService {
   static const String baseUrl = "https://story-api.dicoding.dev/v1";
@@ -45,7 +47,7 @@ class ApiService {
     }
   }
 
-  Future<bool> uploadStory(
+  Future<UploadResponse> uploadStory(
     String description,
     XFile image,
     String token, {
@@ -70,13 +72,13 @@ class ApiService {
     final data = jsonDecode(responseData);
 
     if (response.statusCode == 201) {
-      return true;
+      return UploadResponse.fromJson(data);
     } else {
       throw Exception(data["message"]);
     }
   }
 
-  Future<Map<String, dynamic>> getStories({
+  Future<StoriesResponse> getStories({
     required String token,
     int? page,
     int? size,
@@ -89,6 +91,7 @@ class ApiService {
         if (location != null) 'location': location.toString(),
       },
     );
+
     final response = await http.get(
       uri,
       headers: {
@@ -96,9 +99,10 @@ class ApiService {
         "Authorization": "Bearer $token",
       },
     );
+
     final data = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      return data;
+      return StoriesResponse.fromJson(data); // Langsung return model
     } else {
       throw Exception(data["message"]);
     }
