@@ -32,7 +32,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/img/logo_snap_story.png
     - assets/icon/like.png
     - assets/icon/love.png
     - assets/icon/care.png
@@ -42,3 +41,5 @@ flutter:
     - assets/lottie/error_animation.json
     - assets/lottie/loading_animation.json
     - assets/lottie/white_loading_animation.json
+    - assets/lottie/no_internet_animation.json
+    - assets/img/image_not_found.png

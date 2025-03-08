@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
 
 class PostButtonWidget extends StatelessWidget {
+  final Function()? onPressed;
+  final bool isButtondisabled;
+  final bool isLoading;
   const PostButtonWidget({
     super.key,
     required this.isButtondisabled,
+    required this.isLoading,
+    this.onPressed,
   });
-
-  final bool isButtondisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +21,20 @@ class PostButtonWidget extends StatelessWidget {
         right: 10,
       ),
       child: FloatingActionButton(
-        onPressed: isButtondisabled ? null : () {},
+        onPressed: isButtondisabled || isLoading ? null : onPressed,
         backgroundColor:
-            isButtondisabled ? ColorsManager.grey500 : ColorsManager.primary,
-        child: Icon(Icons.send, color: ColorsManager.white),
+            isButtondisabled || isLoading
+                ? ColorsManager.grey500
+                : ColorsManager.primary,
+        child:
+            isLoading
+                ? Lottie.asset(
+                  'assets/lottie/loading_animation.json',
+                  width: 130,
+                  height: 130,
+                  fit: BoxFit.cover,
+                )
+                : Icon(Icons.send, color: ColorsManager.white),
       ),
     );
   }

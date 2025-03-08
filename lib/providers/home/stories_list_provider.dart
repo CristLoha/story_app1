@@ -27,7 +27,7 @@ class StoriesListProvider with ChangeNotifier {
       }
     } on SocketException {
       _resultState = StoriesErrorState(
-        "No internet connection. Please check your network.",
+        "No internet connection\nPlease check your network",
       );
     } on TimeoutException {
       _resultState = StoriesErrorState(

@@ -59,14 +59,14 @@ class _LoginPageState extends State<LoginPage> {
                       context,
                       (provider.loginState as LoginErrorState).message,
                     );
-                
+
                     provider.resetState();
                   });
                 }
 
                 return ButtonWidget(
                   title: 'Login',
-                  color: ColorsManager.primary,
+
                   isLoading: isLoading,
                   onPressed:
                       isLoading

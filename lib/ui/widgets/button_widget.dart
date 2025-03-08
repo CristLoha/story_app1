@@ -8,12 +8,11 @@ class ButtonWidget extends StatelessWidget {
   final String title;
   final bool isLoading;
   final VoidCallback? onPressed;
-  final Color? color;
 
   const ButtonWidget({
     required this.title,
     this.isLoading = false,
-    this.color,
+
     super.key,
     this.onPressed,
   });
@@ -23,7 +22,7 @@ class ButtonWidget extends StatelessWidget {
     return ElevatedButton(
       onPressed: isLoading ? null : onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color,
+        backgroundColor: ColorsManager.primary,
         foregroundColor: ColorsManager.white,
         disabledBackgroundColor: ColorsManager.primary,
         shape: RoundedRectangleBorder(

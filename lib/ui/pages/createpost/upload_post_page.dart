@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:story_app1/static/upload_result_state.dart';
 import 'package:story_app1/ui/widgets/circle_image_widget.dart';
+import 'package:story_app1/ui/widgets/snackbar_widget.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
 import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
@@ -11,23 +14,23 @@ import 'package:story_app1/ui/pages/createpost/widgets/post_button_widget.dart';
 import 'package:story_app1/ui/pages/createpost/widgets/post_field_widget.dart';
 import 'package:story_app1/ui/pages/createpost/widgets/show_image_widget.dart';
 import 'package:story_app1/ui/pages/createpost/widgets/title_name_widget.dart';
-import 'package:story_app1/providers/createpost/post_provider.dart';
+import 'package:story_app1/providers/uploadpost/upload_post_provider.dart';
 
-class CreatePostPage extends StatefulWidget {
-  const CreatePostPage({super.key});
+class UploadPostPage extends StatefulWidget {
+  const UploadPostPage({super.key});
 
   @override
-  State<CreatePostPage> createState() => _PostPageState();
+  State<UploadPostPage> createState() => _PostPageState();
 }
 
-class _PostPageState extends State<CreatePostPage> {
+class _PostPageState extends State<UploadPostPage> {
   final TextEditingController _descpritionC = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(microseconds: 300), () {
+    Future.delayed(Duration(milliseconds: 300), () {
       _focusNode.requestFocus();
     });
   }
@@ -42,9 +45,7 @@ class _PostPageState extends State<CreatePostPage> {
 
   @override
   Widget build(BuildContext context) {
-    final postProvider = context.watch<PostProvider>();
-    final isButtondisabled =
-        postProvider.description.isEmpty || postProvider.imagePath == null;
+    final provider = context.watch<UploadPostProvider>();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -82,7 +83,7 @@ class _PostPageState extends State<CreatePostPage> {
                           descpritionC: _descpritionC,
                           focusNode: _focusNode,
                         ),
-                        postProvider.imagePath == null
+                        provider.imagePath == null
                             ? SizedBox()
                             : ShowImageWidget(),
                         MediaPickerButtons(
@@ -98,14 +99,45 @@ class _PostPageState extends State<CreatePostPage> {
           ),
         ),
       ),
-      floatingActionButton: PostButtonWidget(
-        isButtondisabled: isButtondisabled,
+      floatingActionButton: Consumer<UploadPostProvider>(
+        builder: (context, provider, child) {
+          final isLoading = provider.state is UploadLoadingState;
+          final isButtondisabled =
+              provider.description.isEmpty ||
+              provider.imagePath == null ||
+              isLoading;
+
+          return PostButtonWidget(
+            isButtondisabled: isButtondisabled,
+            onPressed: isButtondisabled ? null : _onPostSubmit,
+            isLoading: isLoading,
+          );
+        },
       ),
     );
   }
 
+  Future<void> _onPostSubmit() async {
+    final provider = context.read<UploadPostProvider>();
+    await provider.uploadStory();
+
+    if (provider.state is UploadSuccessState) {
+      provider.clearImage();
+      if (mounted) {
+        context.pop(true);
+      }
+    } else if (provider.state is UploadErrorState) {
+      if (mounted) {
+        SnackbarWidget.showError(
+          context,
+          (provider.state as UploadErrorState).message,
+        );
+      }
+    }
+  }
+
   _onGalleryView() async {
-    final postProvider = context.read<PostProvider>();
+    final provider = context.read<UploadPostProvider>();
 
     final isMacOS = defaultTargetPlatform == TargetPlatform.macOS;
     final isLinux = defaultTargetPlatform == TargetPlatform.linux;
@@ -115,13 +147,13 @@ class _PostPageState extends State<CreatePostPage> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      postProvider.setImageFile(pickedFile);
-      postProvider.setImagePath(pickedFile.path);
+      provider.setImageFile(pickedFile);
+      provider.setImagePath(pickedFile.path);
     }
   }
 
   _onCameraView() async {
-    final postProvider = context.read<PostProvider>();
+    final provider = context.read<UploadPostProvider>();
 
     final isAndroid = defaultTargetPlatform == TargetPlatform.android;
     final isiOS = defaultTargetPlatform == TargetPlatform.iOS;
@@ -133,8 +165,8 @@ class _PostPageState extends State<CreatePostPage> {
     );
 
     if (pickedFile != null) {
-      postProvider.setImageFile(pickedFile);
-      postProvider.setImagePath(pickedFile.path);
+      provider.setImageFile(pickedFile);
+      provider.setImagePath(pickedFile.path);
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:story_app1/ui/pages/home/home_page.dart';
 import 'package:story_app1/ui/pages/login/login_page.dart';
-import 'package:story_app1/ui/pages/createpost/create_post_page.dart';
+import 'package:story_app1/ui/pages/createpost/upload_post_page.dart';
 import 'package:story_app1/ui/pages/register/register_page.dart';
 import 'package:story_app1/services/sesion_manager.dart';
 
@@ -20,7 +20,7 @@ final GoRouter appRouter = GoRouter(
       path: '/home',
       builder: (context, state) => HomePage(),
       routes: <RouteBase>[
-        GoRoute(path: 'post', builder: (context, state) => CreatePostPage()),
+        GoRoute(path: 'post', builder: (context, state) => UploadPostPage()),
       ],
     ),
   ],
