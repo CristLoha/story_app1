@@ -71,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 return ButtonWidget(
                   title: 'Register',
                   isLoading: isLoading,
-                  color: ColorsManager.primary,
+
                   onPressed:
                       isLoading
                           ? null

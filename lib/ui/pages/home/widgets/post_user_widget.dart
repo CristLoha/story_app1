@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:provider/provider.dart';
+import 'package:story_app1/providers/home/post_interaction_provider.dart';
+import 'package:story_app1/ui/pages/home/widgets/show_image_widget.dart';
 import 'package:story_app1/ui/widgets/circle_image_widget.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
 import 'package:story_app1/utils/theme_manager/font_manager.dart';
@@ -8,7 +10,6 @@ import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
 import 'package:story_app1/ui/pages/home/widgets/icon_react_widget.dart';
 import 'package:story_app1/ui/pages/createpost/widgets/title_name_widget.dart';
-import 'package:story_app1/providers/createpost/post_provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class PostUserWidget extends StatelessWidget {
@@ -36,7 +37,7 @@ class PostUserWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final postProvider = Provider.of<PostProvider>(context);
+    final provider = Provider.of<PostInteractionProvider>(context);
     final List<Reaction<String>> reactions = [
       Reaction<String>(
         value: 'like',
@@ -120,7 +121,7 @@ class PostUserWidget extends StatelessWidget {
                         caption.length > 30 || textPainter.didExceedMaxLines;
 
                     return GestureDetector(
-                      onTap: () => postProvider.toggleExpanded(postId),
+                      onTap: () => provider.toggleExpanded(postId),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -131,20 +132,18 @@ class PostUserWidget extends StatelessWidget {
                                 fontSize: FontSizeManager.f18,
                                 fontWeight: FontWeightManager.regular,
                               ),
-                              maxLines:
-                                  postProvider.isExpanded(postId) ? null : 1,
+                              maxLines: provider.isExpanded(postId) ? null : 1,
                               overflow:
-                                  postProvider.isExpanded(postId)
+                                  provider.isExpanded(postId)
                                       ? null
                                       : TextOverflow.ellipsis,
                             ),
                           ),
-                          if (isLongText && !postProvider.isExpanded(postId))
+                          if (isLongText && !provider.isExpanded(postId))
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: GestureDetector(
-                                onTap:
-                                    () => postProvider.toggleExpanded(postId),
+                                onTap: () => provider.toggleExpanded(postId),
                                 child: Text(
                                   "See More",
                                   style: TextStyle(
@@ -162,17 +161,7 @@ class PostUserWidget extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            height: 340,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: ColorsManager.softWhite,
-              image: DecorationImage(
-                image: NetworkImage(urlImagePost),
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-          ),
+          ShowImageWidget(imageUrl: urlImagePost),
           SizedBox(height: 10),
           Padding(
             padding: EdgeInsets.symmetric(
@@ -180,9 +169,9 @@ class PostUserWidget extends StatelessWidget {
               vertical: AppPadding.p10,
             ),
             child: ReactionButton<String>(
-              key: ValueKey(postProvider.getSelectedReaction(postId)?.value),
+              key: ValueKey(provider.getSelectedReaction(postId)?.value),
               onReactionChanged: (Reaction<String>? reaction) {
-                postProvider.updateSelectedReaction(postId, reaction);
+                provider.updateSelectedReaction(postId, reaction);
               },
               reactions: reactions,
               placeholder: Reaction<String>(
@@ -190,8 +179,8 @@ class PostUserWidget extends StatelessWidget {
                 icon: Row(
                   children: [
                     Image.asset(
-                      postProvider.getSelectedReaction(postId)?.value != null
-                          ? 'assets/icon/${postProvider.getSelectedReaction(postId)!.value}.png'
+                      provider.getSelectedReaction(postId)?.value != null
+                          ? 'assets/icon/${provider.getSelectedReaction(postId)!.value}.png'
                           : 'assets/icon/like_default.png',
                       width: 30,
                       height: 30,
@@ -200,22 +189,22 @@ class PostUserWidget extends StatelessWidget {
                     AnimatedSwitcher(
                       duration: Duration(milliseconds: 300),
                       child: Text(
-                        postProvider.getSelectedReaction(postId)?.value != null
-                            ? postProvider
+                        provider.getSelectedReaction(postId)?.value != null
+                            ? provider
                                     .getSelectedReaction(postId)!
                                     .value![0]
                                     .toUpperCase() +
-                                postProvider
+                                provider
                                     .getSelectedReaction(postId)!
                                     .value!
                                     .substring(1)
                                     .toLowerCase()
                             : "Like",
                         key: ValueKey(
-                          postProvider.getSelectedReaction(postId)?.value,
+                          provider.getSelectedReaction(postId)?.value,
                         ),
                         style: _getTextStyleByReaction(
-                          postProvider.getSelectedReaction(postId),
+                          provider.getSelectedReaction(postId),
                         ),
                       ),
                     ),
@@ -223,7 +212,7 @@ class PostUserWidget extends StatelessWidget {
                 ),
               ),
               selectedReaction:
-                  postProvider.getSelectedReaction(postId) ?? reactions.first,
+                  provider.getSelectedReaction(postId) ?? reactions.first,
               itemSize: const Size(40, 40),
             ),
           ),

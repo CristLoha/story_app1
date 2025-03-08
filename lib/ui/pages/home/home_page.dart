@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:story_app1/providers/home/stories_list_provider.dart';
 import 'package:story_app1/static/stories_result_state.dart';
 import 'package:story_app1/ui/pages/home/widgets/side_menu_widget.dart';
+import 'package:story_app1/ui/widgets/button_widget.dart';
 import 'package:story_app1/ui/widgets/circle_image_widget.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
 import 'package:story_app1/utils/theme_manager/font_manager.dart';
@@ -35,6 +36,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _resfreshStories() async {
+    final token = await _sesionManager.getToken();
+    if (token != null) {
+      final storyProvider = context.read<StoriesListProvider>();
+      await storyProvider.fetchStories(token);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,23 +67,39 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           } else if (provider.resultState is StoriesErrorState) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text((provider.resultState as StoriesErrorState).message),
-                  SizedBox(height: 10),
-                  ElevatedButton(
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Lottie.asset(
+                      'assets/lottie/no_internet_animation.json',
+                      width: 180,
+                      fit: BoxFit.contain,
+                    ),
+                    Text(
+                      (provider.resultState as StoriesErrorState).message,
+                      style: getGrey900TextStyle().copyWith(
+                        color: ColorsManager.secondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 120),
+                  child: ButtonWidget(
                     onPressed: () async {
                       final token = await _sesionManager.getToken();
                       if (token != null) {
                         await provider.fetchStories(token);
                       }
                     },
-                    child: Text("Retry"),
+                    title: 'Retry',
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           } else if (provider.resultState is StoriesLoadedState) {
             final stories = (provider.resultState as StoriesLoadedState).data;
@@ -85,6 +110,7 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.only(
                     left: AppPadding.p24,
                     right: AppPadding.p24,
+                    top: AppPadding.p20,
                   ),
                   child: Row(
                     children: [
@@ -92,7 +118,15 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(width: 10),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () => context.go('/home/post'),
+                          onTap: () async {
+                            final result = await context.push<bool>(
+                              '/home/post',
+                            );
+
+                            if (result == true) {
+                              _resfreshStories();
+                            }
+                          },
                           child: Container(
                             height: 64,
                             decoration: BoxDecoration(

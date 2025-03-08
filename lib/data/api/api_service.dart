@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:story_app1/data/model/login_response.dart';
 import 'package:story_app1/data/model/register_response.dart';
 
 class ApiService {
   static const String baseUrl = "https://story-api.dicoding.dev/v1";
+
   Future<LoginResponse> login(String email, String password) async {
     final url = Uri.parse('$baseUrl/login');
     final response = await http.post(
@@ -38,6 +40,37 @@ class ApiService {
 
     if (response.statusCode == 201) {
       return RegisterResponse.fromJson(data);
+    } else {
+      throw Exception(data["message"]);
+    }
+  }
+
+  Future<bool> uploadStory(
+    String description,
+    XFile image,
+    String token, {
+    double? lat,
+    double? lon,
+  }) async {
+    final url = Uri.parse('$baseUrl/stories');
+
+    var request =
+        http.MultipartRequest('POST', url)
+          ..headers['Authorization'] = 'Bearer $token'
+          ..fields['description'] = description;
+
+    if (lat != null && lon != null) {
+      request.fields['lat'] = lat.toString();
+      request.fields['lon'] = lon.toString();
+    }
+
+    request.files.add(await http.MultipartFile.fromPath('photo', image.path));
+    final response = await request.send();
+    final responseData = await response.stream.bytesToString();
+    final data = jsonDecode(responseData);
+
+    if (response.statusCode == 201) {
+      return true;
     } else {
       throw Exception(data["message"]);
     }
