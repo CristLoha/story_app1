@@ -109,8 +109,6 @@ class UploadPostProvider extends ChangeNotifier {
       return false;
     }
   }
-
-  /// 🏆 **Resize Image di Isolate agar UI tidak nge-freeze**
   static List<int> _resizeImageIsolate(List<int> bytes) {
     if (bytes.length < 1000000) return bytes;
 
@@ -132,8 +130,6 @@ class UploadPostProvider extends ChangeNotifier {
 
     return newBytes;
   }
-
-  /// 🏆 **Kompresi Image di Isolate agar UI tetap responsif**
   static List<int> _compressImageIsolate(List<int> bytes) {
     if (bytes.length < 1000000) return bytes;
 
