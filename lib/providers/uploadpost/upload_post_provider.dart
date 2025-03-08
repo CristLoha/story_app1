@@ -35,32 +35,45 @@ class UploadPostProvider extends ChangeNotifier {
   }
 
   Future<void> uploadStory({double? lat, double? lon}) async {
-    if (imageFile == null || description.isEmpty) return;
+    if (imageFile == null || description.isEmpty) {
+      _state = UploadErrorState(
+        "Please select an image and enter a description.",
+      );
+      notifyListeners();
+      return;
+    }
+
+    // Cek koneksi internet dulu sebelum masuk loading state
+    bool hasInternet = await _checkInternetConnection();
+    if (!hasInternet) {
+      _state = UploadErrorState(
+        "No internet connection. Please check your network and try again.",
+      );
+      notifyListeners();
+      return;
+    }
 
     _state = UploadLoadingState();
     notifyListeners();
 
     try {
       final token = await _sessionManager.getToken();
-      if (token == null) throw Exception("User is not logged in");
+      if (token == null) {
+        throw Exception("Session expired. Please log in again.");
+      }
 
-      // Baca file asli
       Uint8List originalBytes = await imageFile!.readAsBytes();
 
-      // Resize & compress image
       List<int> resizedBytes = await resizeImage(originalBytes);
       List<int> compressedBytes = await compressImage(resizedBytes);
 
-      // Simpan file sementara
       XFile processedFile = await saveTemporaryFile(
         Uint8List.fromList(compressedBytes),
         imageFile!.name,
       );
 
-      // **Set path setelah file diproses**
       setImagePath(processedFile.path);
 
-      // Upload ke API
       await _apiService.uploadStory(
         description,
         processedFile,
@@ -71,10 +84,34 @@ class UploadPostProvider extends ChangeNotifier {
 
       _state = UploadSuccessState();
     } catch (e) {
-      _state = UploadErrorState(e.toString());
+      String errorMessage;
+
+      if (e.toString().contains("Session expired")) {
+        errorMessage = "Session expired. Please log in again.";
+      } else if (e.toString().contains("upload failed")) {
+        errorMessage = "Failed to upload image. Please try again later.";
+      } else {
+        errorMessage = "Something went wrong. Please try again later.";
+      }
+
+      _state = UploadErrorState(errorMessage);
     }
 
     notifyListeners();
+  }
+
+  Future<bool> _checkInternetConnection() async {
+    try {
+      final result = await Socket.connect(
+        'google.com',
+        80,
+        timeout: Duration(seconds: 3),
+      );
+      result.destroy();
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<List<int>> resizeImage(List<int> bytes) async {
