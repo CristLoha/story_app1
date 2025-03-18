@@ -9,6 +9,8 @@ import 'package:story_app1/data/model/upload_response.dart';
 class ApiService {
   static const String baseUrl = "https://story-api.dicoding.dev/v1";
 
+  final http.Client client;
+  ApiService(this.client);
   Future<LoginResponse> login(String email, String password) async {
     final url = Uri.parse('$baseUrl/login');
     final response = await http.post(
@@ -80,14 +82,14 @@ class ApiService {
 
   Future<StoriesResponse> getStories({
     required String token,
-    int? page,
-    int? size,
+    int page = 1,
+    int size = 10,
     int? location,
   }) async {
     final uri = Uri.parse('$baseUrl/stories').replace(
       queryParameters: {
-        if (page != null) 'page': page.toString(),
-        if (size != null) 'size': size.toString(),
+        'page': page.toString(),
+        'size': size.toString(),
         if (location != null) 'location': location.toString(),
       },
     );
@@ -100,11 +102,10 @@ class ApiService {
       },
     );
 
-    final data = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      return StoriesResponse.fromJson(data); // Langsung return model
+      return StoriesResponse.fromJson(json.decode(response.body));
     } else {
-      throw Exception(data["message"]);
+      throw Exception("Failed to fetch stories: ${response.body}");
     }
   }
 }

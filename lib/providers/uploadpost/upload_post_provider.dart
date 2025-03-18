@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
@@ -12,7 +13,7 @@ class UploadPostProvider extends ChangeNotifier {
   String? imagePath;
   String description = '';
 
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService = ApiService(Client());
   final SessionManager _sessionManager = SessionManager();
   UploadResultState _state = UploadNoneState();
 
@@ -109,6 +110,7 @@ class UploadPostProvider extends ChangeNotifier {
       return false;
     }
   }
+
   static List<int> _resizeImageIsolate(List<int> bytes) {
     if (bytes.length < 1000000) return bytes;
 
@@ -130,6 +132,7 @@ class UploadPostProvider extends ChangeNotifier {
 
     return newBytes;
   }
+
   static List<int> _compressImageIsolate(List<int> bytes) {
     if (bytes.length < 1000000) return bytes;
 

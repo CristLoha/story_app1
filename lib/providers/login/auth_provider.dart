@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:story_app1/data/api/api_service.dart';
 
 import 'package:story_app1/services/sesion_manager.dart';
@@ -8,7 +9,7 @@ import 'package:story_app1/static/login_result_state.dart';
 import 'package:story_app1/static/register_result_state.dart';
 
 class AuthProvider with ChangeNotifier {
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService = ApiService(Client());
   final SessionManager _sesionManager = SessionManager();
 
   LoginResultState _loginState = LoginInitialState();
