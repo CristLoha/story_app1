@@ -16,7 +16,7 @@ class StoriesListProvider with ChangeNotifier {
   bool get isFetching => _isFetching;
   bool get hasMoreData => _hasMoreData;
 
-  StoriesResultState _resultState = StoriesResultState.initial();
+  StoriesResultState _resultState = StoriesResultState.loading();
   StoriesResultState get resultState => _resultState;
 
   String? _token;

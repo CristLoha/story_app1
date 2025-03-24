@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:story_app1/data/api/api_service.dart';
-
 import 'package:story_app1/services/sesion_manager.dart';
 import 'package:story_app1/static/login_result_state.dart';
 import 'package:story_app1/static/register_result_state.dart';
@@ -12,7 +11,7 @@ class AuthProvider with ChangeNotifier {
   final ApiService _apiService = ApiService(Client());
   final SessionManager _sesionManager = SessionManager();
 
-  LoginResultState _loginState = LoginInitialState();
+  LoginResultState _loginState = LoginResultState.initial();
   RegisterResultState _registerState = RegisterInitialState();
 
   LoginResultState get loginState => _loginState;
@@ -26,7 +25,7 @@ class AuthProvider with ChangeNotifier {
       final name = await _sesionManager.getName();
 
       if (token != null && userId != null && name != null) {
-        _loginState = LoginSuccessState(
+        _loginState = LoginResultState.loaded(
           userId: userId,
           name: name,
           token: token,
@@ -34,18 +33,20 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
       }
     } else {
-      _loginState = LoginInitialState();
+      _loginState = LoginResultState.initial();
       notifyListeners();
     }
   }
 
   Future<void> login(String email, String password) async {
     if (email.isEmpty || password.isEmpty) {
-      _loginState = LoginErrorState("Please enter both email and password.");
+      _loginState = LoginResultState.error(
+        "Please enter both email and password.",
+      );
       notifyListeners();
       return;
     }
-    _loginState = LoginLoadingState();
+    _loginState = LoginResultState.loading();
     notifyListeners();
     try {
       final response = await _apiService.login(email, password);
@@ -57,29 +58,29 @@ class AuthProvider with ChangeNotifier {
           response.loginResult!.name,
         );
 
-        _loginState = LoginSuccessState(
+        _loginState = LoginResultState.loaded(
           userId: response.loginResult!.userId,
           name: response.loginResult!.name,
           token: response.loginResult!.token,
         );
       } else {
-        _loginState = LoginErrorState(response.message);
+        _loginState = LoginResultState.error(response.message);
       }
     } on SocketException {
-      _loginState = LoginErrorState(
+      _loginState = LoginResultState.error(
         "No internet connection. Please check your network.",
       );
     } on TimeoutException {
-      _loginState = LoginErrorState(
+      _loginState = LoginResultState.error(
         "The request took too long. Please try again later.",
       );
     } on FormatException {
-      _loginState = LoginErrorState(
+      _loginState = LoginResultState.error(
         "Unexpected error. Please restart the app.",
       );
     } catch (e) {
       final errorMessage = e.toString().replaceAll("Exception: ", "").trim();
-      _loginState = LoginErrorState(errorMessage);
+      _loginState = LoginResultState.error(errorMessage);
     } finally {
       notifyListeners();
     }
@@ -126,12 +127,12 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> logout() async {
     await _sesionManager.clearSession();
-    _loginState = LoginInitialState();
+    _loginState = LoginResultState.initial();
     notifyListeners();
   }
 
   void resetState() {
-    _loginState = LoginInitialState();
+    _loginState = LoginResultState.initial();
     notifyListeners();
   }
 }

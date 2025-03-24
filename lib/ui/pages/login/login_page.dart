@@ -51,20 +51,18 @@ class _LoginPageState extends State<LoginPage> {
             Consumer<AuthProvider>(
               builder: (context, provider, _) {
                 final isLoading = provider.loginState is LoginLoadingState;
-                if (provider.loginState is LoginErrorState) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    SnackbarWidget.showError(
-                      context,
-                      (provider.loginState as LoginErrorState).message,
-                    );
 
-                    provider.resetState();
-                  });
-                }
+                provider.loginState.whenOrNull(
+                  error: (message) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      SnackbarWidget.showError(context, message);
+                      provider.resetState();
+                    });
+                  },
+                );
 
                 return ButtonWidget(
                   title: 'Login',
-
                   isLoading: isLoading,
                   onPressed:
                       isLoading

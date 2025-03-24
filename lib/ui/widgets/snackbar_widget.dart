@@ -19,8 +19,11 @@ class SnackbarWidget extends StatefulWidget {
     );
 
     overlay.insert(overlayEntry);
+
     Future.delayed(const Duration(seconds: 2), () {
-      overlayEntry.remove();
+      if (overlayEntry.mounted) {
+        overlayEntry.remove();
+      }
     });
   }
 }
@@ -41,8 +44,21 @@ class _SnackbarWidgetState extends State<SnackbarWidget>
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
 
     _controller.forward();
-    Future.delayed(const Duration(seconds: 2), () async {
-      await _controller.reverse();
+
+    // Pastikan animasi reverse hanya berjalan jika widget masih mounted
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        _controller.reverse();
+      }
+    });
+
+    // Tambahkan listener untuk menghapus widget setelah animasi reverse selesai
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed && mounted) {
+        if (mounted) {
+          Overlay.of(context).dispose();
+        }
+      }
     });
   }
 
