@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app1/providers/home/stories_list_provider.dart';
-import 'package:story_app1/static/stories_result_state.dart';
 import 'package:story_app1/ui/pages/home/widgets/side_menu_widget.dart';
 import 'package:story_app1/ui/widgets/button_widget.dart';
 import 'package:story_app1/ui/widgets/loading_animation_widget.dart';
@@ -71,71 +70,82 @@ class _HomePageState extends State<HomePage> {
       drawer: SideMenuWidget(sesionManager: _sessionManager),
       body: Consumer<StoriesListProvider>(
         builder: (context, provider, child) {
-          if (provider.resultState is StoriesLoadingState) {
-            return LoadingAnimationWidget();
-          } else if (provider.resultState is StoriesErrorState) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Lottie.asset(
-                  'assets/lottie/no_internet_animation.json',
-                  width: 180,
-                  fit: BoxFit.contain,
-                ),
-                Text(
-                  (provider.resultState as StoriesErrorState).message,
-                  style: getGrey900TextStyle().copyWith(
-                    color: ColorsManager.secondary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 120),
-                  child: ButtonWidget(
-                    onPressed: () async {
-                      await provider.fetchStories();
-                    },
-                    title: 'Retry',
-                  ),
-                ),
-              ],
-            );
-          } else if (provider.resultState is StoriesLoadedState) {
-            final stories = (provider.resultState as StoriesLoadedState).data;
-            return RefreshIndicator(
-              onRefresh: _refreshStories,
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: stories.length + (provider.hasMoreData ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == stories.length && provider.hasMoreData) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                  final post = stories[index];
+          final state = provider.resultState;
 
-                  return PostUserWidget(
-                    urlImageUser: "https://picsum.photos/200/200?random=$index",
-                    urlImagePost: post.photoUrl,
-                    userName: post.name,
-                    caption: post.description,
-                    time: post.createdAt,
-                    postId: index.toString(),
-                    onTap: () {
-                      context.push('/home/detail', extra: post);
-                    },
-                  );
-                },
-              ),
-            );
-          } else {
-            return SizedBox();
-          }
+          return state.map(
+            loading: (value) {
+              return LoadingAnimationWidget();
+            },
+            error: (value) {
+              final message = value.message;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/lottie/no_internet_animation.json',
+                    width: 180,
+                    fit: BoxFit.contain,
+                  ),
+                  Text(
+                    message,
+                    style: getGrey900TextStyle().copyWith(
+                      color: ColorsManager.secondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 120),
+                    child: ButtonWidget(
+                      onPressed: () async {
+                        await provider.fetchStories();
+                      },
+                      title: 'Retry',
+                    ),
+                  ),
+                ],
+              );
+            },
+
+            loaded: (value) {
+              final stories = value.data;
+              return RefreshIndicator(
+                onRefresh: _refreshStories,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: stories.length + (provider.hasMoreData ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == stories.length && provider.hasMoreData) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    final post = stories[index];
+
+                    return PostUserWidget(
+                      urlImageUser:
+                          "https://picsum.photos/200/200?random=$index",
+                      urlImagePost: post.photoUrl,
+                      userName: post.name,
+                      caption: post.description,
+                      time: post.createdAt,
+                      postId: index.toString(),
+                      onTap: () {
+                        context.push('/home/detail', extra: post);
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+
+            initial: (value) {
+              return const SizedBox();
+            },
+          );
         },
       ),
     );

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:story_app1/data/model/story_model.dart';
+import 'package:story_app1/data/model/story/story.dart';
 import 'package:story_app1/ui/pages/home/widgets/show_image_widget.dart';
 import 'package:story_app1/utils/theme_manager/font_manager.dart';
 import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
 
 class StoryDetailPage extends StatelessWidget {
-  final StoryModel story;
+  final Story story;
 
   const StoryDetailPage({super.key, required this.story});
 
