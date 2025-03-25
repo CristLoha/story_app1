@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:story_app1/static/upload_result_state.dart';
+import 'package:story_app1/static/state/upload/upload_result_state.dart';
 import 'package:story_app1/ui/widgets/circle_image_widget.dart';
 import 'package:story_app1/ui/widgets/snackbar_widget.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
@@ -118,7 +118,7 @@ class _PostPageState extends State<UploadPostPage> {
     final provider = context.read<UploadPostProvider>();
     await provider.uploadStory();
 
-    if (provider.state is UploadSuccessState) {
+    if (provider.state is UploadLoadedState) {
       provider.clearImage();
       if (mounted) {
         context.pop(true);

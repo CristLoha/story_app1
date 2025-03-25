@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:story_app1/data/model/login/login_response.dart';
 import 'package:story_app1/data/model/register/register_response.dart';
 import 'package:story_app1/data/model/story/stories_response.dart';
-import 'package:story_app1/data/model/upload_response.dart';
+import 'package:story_app1/data/model/upload/upload_response.dart';
 
 class ApiService {
   static const String baseUrl = "https://story-api.dicoding.dev/v1";

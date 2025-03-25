@@ -6,7 +6,7 @@ import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import 'package:story_app1/data/api/api_service.dart';
 import 'package:story_app1/services/sesion_manager.dart';
-import 'package:story_app1/static/upload_result_state.dart';
+import 'package:story_app1/static/state/upload/upload_result_state.dart';
 
 class UploadPostProvider extends ChangeNotifier {
   XFile? imageFile;
@@ -37,14 +37,14 @@ class UploadPostProvider extends ChangeNotifier {
   Future<void> uploadStory({double? lat, double? lon}) async {
     bool hasInternet = await _checkInternetConnection();
     if (!hasInternet) {
-      _state = UploadErrorState(
+      _state = UploadResultState.error(
         "No internet connection. Please check your network and try again.",
       );
       notifyListeners();
       return;
     }
 
-    _state = UploadLoadingState();
+    _state = UploadResultState.loading();
     notifyListeners();
 
     try {
@@ -79,7 +79,7 @@ class UploadPostProvider extends ChangeNotifier {
         lon: lon,
       );
 
-      _state = UploadSuccessState();
+      _state = UploadResultState.loaded();
     } catch (e) {
       String errorMessage;
 
@@ -91,7 +91,7 @@ class UploadPostProvider extends ChangeNotifier {
         errorMessage = "Something went wrong. Please try again later.";
       }
 
-      _state = UploadErrorState(errorMessage);
+      _state = UploadResultState.error(errorMessage);
     }
 
     notifyListeners();
