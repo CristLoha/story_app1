@@ -3,7 +3,7 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app1/data/api/api_service.dart';
 import 'package:story_app1/providers/home/post_interaction_provider.dart';
-import 'package:story_app1/static/app_route.dart';
+import 'package:story_app1/static/router/app_route.dart';
 import 'package:story_app1/providers/home/stories_list_provider.dart';
 import 'package:story_app1/utils/theme_manager/theme_data_manager.dart';
 import 'package:story_app1/providers/login/auth_provider.dart';

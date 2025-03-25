@@ -7,9 +7,11 @@ import 'package:story_app1/ui/pages/home/widgets/side_menu_widget.dart';
 import 'package:story_app1/ui/widgets/button_widget.dart';
 import 'package:story_app1/ui/widgets/loading_animation_widget.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
+import 'package:story_app1/utils/theme_manager/font_manager.dart';
 import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
 import 'package:story_app1/ui/pages/home/widgets/post_user_widget.dart';
+import 'package:story_app1/ui/widgets/circle_image_widget.dart';
 import 'package:story_app1/services/sesion_manager.dart';
 
 class HomePage extends StatefulWidget {
@@ -106,42 +108,93 @@ class _HomePageState extends State<HomePage> {
                 ],
               );
             },
-
             loaded: (value) {
               final stories = value.data;
               return RefreshIndicator(
                 onRefresh: _refreshStories,
-                child: ListView.builder(
+                child: ListView(
                   controller: _scrollController,
-                  itemCount: stories.length + (provider.hasMoreData ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == stories.length && provider.hasMoreData) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
-                    final post = stories[index];
-
-                    return PostUserWidget(
-                      urlImageUser:
-                          "https://picsum.photos/200/200?random=$index",
-                      urlImagePost: post.photoUrl,
-                      userName: post.name,
-                      caption: post.description,
-                      time: post.createdAt,
-                      postId: index.toString(),
-                      onTap: () {
-                        context.push('/home/detail', extra: post);
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: AppPadding.p24,
+                        right: AppPadding.p24,
+                        top: AppPadding.p20,
+                      ),
+                      child: Row(
+                        children: [
+                          CircleImageWidget(
+                            url: "https://picsum.photos/200/200",
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () async {
+                                final result = await context.push<bool>(
+                                  '/home/post',
+                                );
+                                if (result == true) {
+                                  _refreshStories();
+                                }
+                              },
+                              child: Container(
+                                height: 64,
+                                decoration: BoxDecoration(
+                                  color: ColorsManager.softWhite,
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(
+                                    color: ColorsManager.grey300,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "What's on your mind?",
+                                    style: getGrey900TextStyle().copyWith(
+                                      fontWeight: FontWeightManager.regular,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount:
+                          stories.length + (provider.hasMoreData ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == stories.length && provider.hasMoreData) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+                        final post = stories[index];
+                        return PostUserWidget(
+                          urlImageUser:
+                              "https://picsum.photos/200/200?random=$index",
+                          urlImagePost: post.photoUrl,
+                          userName: post.name,
+                          caption: post.description,
+                          time: post.createdAt,
+                          postId: index.toString(),
+                          onTap: () {
+                            context.push('/home/detail', extra: post);
+                          },
+                        );
                       },
-                    );
-                  },
+                    ),
+                  ],
                 ),
               );
             },
-
             initial: (value) {
               return const SizedBox();
             },

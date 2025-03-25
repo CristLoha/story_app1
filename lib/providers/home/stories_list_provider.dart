@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:story_app1/data/api/api_service.dart';
 import 'package:story_app1/data/model/story/story.dart';
-import 'package:story_app1/static/stories_result_state.dart';
+import 'package:story_app1/static/state/story/stories_result_state.dart';
 
 class StoriesListProvider with ChangeNotifier {
   final ApiService _apiService;
@@ -109,7 +109,31 @@ class StoriesListProvider with ChangeNotifier {
   }
 
   Future<void> refreshStories() async {
-    await fetchStories();
+    if (_token == null || _isFetching) return;
+
+    _isFetching = true;
+    notifyListeners();
+
+    try {
+      final result = await _apiService.getStories(
+        token: _token!,
+        page: 1,
+        size: _sizeItems,
+      );
+
+      _stories.clear();
+      _stories.addAll(result.listStory);
+      _currentPage = 1;
+      _hasMoreData = result.listStory.length == _sizeItems;
+      _resultState = StoriesResultState.loaded(_stories);
+    } catch (e) {
+      _resultState = StoriesResultState.error(
+        "Failed to refresh stories. Please try again.",
+      );
+    }
+
+    _isFetching = false;
+    notifyListeners();
   }
 
   Future<bool> _checkInternetConnection() async {

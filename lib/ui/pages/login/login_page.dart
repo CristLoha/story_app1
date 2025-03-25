@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app1/providers/login/auth_provider.dart';
-import 'package:story_app1/static/login_result_state.dart';
+import 'package:story_app1/static/state/login/login_result_state.dart';
 import 'package:story_app1/ui/widgets/button_widget.dart';
 import 'package:story_app1/ui/widgets/logo_widget.dart';
 import 'package:story_app1/ui/widgets/snackbar_widget.dart';

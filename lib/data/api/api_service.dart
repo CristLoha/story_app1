@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:story_app1/data/model/login/login_response.dart';
-import 'package:story_app1/data/model/register_response.dart';
+import 'package:story_app1/data/model/register/register_response.dart';
 import 'package:story_app1/data/model/story/stories_response.dart';
 import 'package:story_app1/data/model/upload_response.dart';
 

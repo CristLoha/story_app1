@@ -57,14 +57,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 final isLoading =
                     provider.registerStete is RegisterLoadingState;
 
-                if (provider.registerStete is RegisterErrorState) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    SnackbarWidget.showError(
-                      context,
-                      (provider.registerStete as RegisterErrorState).message,
-                    );
-                  });
-                }
+                provider.loginState.whenOrNull(
+                  error: (message) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      SnackbarWidget.showError(context, message);
+                      provider.resetState();
+                    });
+                  },
+                );
 
                 return ButtonWidget(
                   title: 'Register',
@@ -80,8 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               emailC.text,
                               passC.text,
                             );
-                            if (provider.registerStete
-                                is RegisterSuccessState) {
+                            if (provider.registerStete is RegisterLoadedState) {
                               if (mounted) {
                                 navigator.go('/login');
                               }

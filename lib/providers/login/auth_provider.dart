@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:story_app1/data/api/api_service.dart';
 import 'package:story_app1/services/sesion_manager.dart';
-import 'package:story_app1/static/login_result_state.dart';
+import 'package:story_app1/static/state/login/login_result_state.dart';
 import 'package:story_app1/static/register_result_state.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -12,7 +12,7 @@ class AuthProvider with ChangeNotifier {
   final SessionManager _sesionManager = SessionManager();
 
   LoginResultState _loginState = LoginResultState.initial();
-  RegisterResultState _registerState = RegisterInitialState();
+  RegisterResultState _registerState = RegisterResultState.initial();
 
   LoginResultState get loginState => _loginState;
   RegisterResultState get registerStete => _registerState;
@@ -88,38 +88,38 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> register(String name, String email, String password) async {
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      _registerState = RegisterErrorState("Please fill in all fields.");
+      _registerState = RegisterResultState.error("Please fill in all fields.");
       notifyListeners();
       return;
     }
 
-    _registerState = RegisterLoadingState();
+    _registerState = RegisterResultState.loading();
     notifyListeners();
 
     try {
       final response = await _apiService.register(name, email, password);
 
       if (!response.error) {
-        _registerState = RegisterSuccessState(response.message);
+        _registerState = RegisterResultState.loaded(response.message);
         notifyListeners();
       } else {
-        _registerState = RegisterErrorState(response.message);
+        _registerState = RegisterResultState.loaded(response.message);
       }
     } on SocketException {
-      _registerState = RegisterErrorState(
+      _registerState = RegisterResultState.error(
         "No internet connection. Please check your network.",
       );
     } on TimeoutException {
-      _registerState = RegisterErrorState(
+      _registerState = RegisterResultState.error(
         "The request took too long. Please try again later.",
       );
     } on FormatException {
-      _registerState = RegisterErrorState(
+      _registerState = RegisterResultState.error(
         "Unexpected error. Please restart the app.",
       );
     } catch (e) {
       final errorMessage = e.toString().replaceAll("Exception: ", "").trim();
-      _registerState = RegisterErrorState(errorMessage);
+      _registerState = RegisterResultState.error(errorMessage);
     } finally {
       notifyListeners();
     }
