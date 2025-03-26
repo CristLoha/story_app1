@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:story_app1/data/model/story/story.dart';
+import 'package:story_app1/providers/maps/google_maps_provider.dart';
+import 'package:story_app1/ui/pages/detail/widgets/icon_button_widget.dart';
 import 'package:story_app1/ui/pages/home/widgets/show_image_widget.dart';
-import 'package:story_app1/utils/theme_manager/font_manager.dart';
-import 'package:story_app1/utils/theme_manager/style_manager.dart';
-import 'package:story_app1/utils/theme_manager/values_manager.dart';
 
 class StoryDetailPage extends StatelessWidget {
   final Story story;
@@ -12,46 +14,137 @@ class StoryDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (story.lat != null && story.lon != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<GoogleMapsProvider>(
+          context,
+          listen: false,
+        ).setStoryLocation(story.lat!, story.lon!, story.name);
+      });
+    }
+
     return Scaffold(
-      appBar: AppBar(title: Text('Detail', style: getWhiteTextStyle())),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      appBar: AppBar(title: const Text('Detail')),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  story.name,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(story.description, style: const TextStyle(fontSize: 16)),
+              ],
+            ),
+          ),
+          Expanded(child: ShowImageWidget(imageUrl: story.photoUrl)),
+          if (story.lat != null && story.lon != null)
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppPadding.p24,
-                vertical: 24,
-              ),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    story.name,
-                    style: getGrey900TextStyle().copyWith(
-                      fontSize: AppSize.s20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: SizedBox(
+                          height: 200,
+                          width: double.infinity,
+                          child: Consumer<GoogleMapsProvider>(
+                            builder: (context, provider, _) {
+                              return GoogleMap(
+                                myLocationButtonEnabled: false,
+                                zoomControlsEnabled: false,
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(story.lat!, story.lon!),
+                                  zoom: 14,
+                                ),
+                                markers: provider.markers,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: IconButtonWidget(
+                          icon: Icons.fullscreen,
+                          onPressed:
+                              () => showFullScreenMapDialog(
+                                context,
+                                story.lat!,
+                                story.lon!,
+                                story.name,
+                              ),
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    story.description,
-                    style: getGrey900TextStyle(
-                      fontSize: FontSizeManager.f18,
-                      fontWeight: FontWeightManager.regular,
-                    ),
-                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
-
-            ShowImageWidget(imageUrl: story.photoUrl),
-
-            const SizedBox(height: AppSize.s20),
-          ],
-        ),
+        ],
       ),
     );
   }
+}
+
+void showFullScreenMapDialog(
+  BuildContext context,
+  double lat,
+  double lon,
+  String locationName,
+) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.9,
+              child: Consumer<GoogleMapsProvider>(
+                builder: (context, provider, _) {
+                  return GoogleMap(
+                    myLocationButtonEnabled: true,
+                    zoomControlsEnabled: true,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(lat, lon),
+                      zoom: 18,
+                    ),
+                    markers: provider.markers,
+                    onMapCreated: (controller) {
+                      provider.setController(controller);
+                      provider.setStoryLocation(lat, lon, locationName);
+                    },
+                  );
+                },
+              ),
+            ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: IconButtonWidget(
+                onPressed: () => context.pop(),
+                icon: Icons.close,
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

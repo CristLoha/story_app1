@@ -3,6 +3,7 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app1/data/api/api_service.dart';
 import 'package:story_app1/providers/home/post_interaction_provider.dart';
+import 'package:story_app1/providers/maps/google_maps_provider.dart';
 import 'package:story_app1/static/router/app_route.dart';
 import 'package:story_app1/providers/home/stories_list_provider.dart';
 import 'package:story_app1/utils/theme_manager/theme_data_manager.dart';
@@ -27,6 +28,8 @@ class AppPage extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
         ChangeNotifierProvider(create: (_) => UploadPostProvider()),
         ChangeNotifierProvider(create: (_) => PostInteractionProvider()),
+        
+        ChangeNotifierProvider(create: (_) => GoogleMapsProvider()),
       ],
       child: MaterialApp.router(
         scaffoldMessengerKey: scaffoldMessengerKey,
