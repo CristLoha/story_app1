@@ -3,11 +3,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 
 class GoogleMapsProvider extends ChangeNotifier {
-  GoogleMapController? _controller;
+  late GoogleMapController _controller;
   final Set<Marker> _markers = {};
   String _locationName = "Loading..."; // Tambahin ini buat nama lokasi
 
-  GoogleMapController? get controller => _controller;
+  GoogleMapController get controller => _controller;
   Set<Marker> get markers => _markers;
   String get locationName => _locationName;
 
@@ -52,16 +52,17 @@ class GoogleMapsProvider extends ChangeNotifier {
   }
 
   void animateToLocation(double lat, double lon) {
-    if (_controller != null) {
-      _controller!.animateCamera(
-        CameraUpdate.newLatLngZoom(LatLng(lat, lon), 18),
-      );
-    }
+    _controller.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lon), 18));
+  }
+
+  void clearLocationName() {
+    _locationName = "";
+    notifyListeners();
   }
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _controller.dispose();
     super.dispose();
   }
 }
