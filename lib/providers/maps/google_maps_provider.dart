@@ -22,14 +22,14 @@ class GoogleMapsProvider extends ChangeNotifier {
       Marker(
         markerId: MarkerId(name),
         position: LatLng(lat, lon),
-        infoWindow: InfoWindow(title: name),
+        infoWindow: InfoWindow(title: locationName),
         onTap: () {
           animateToLocation(lat, lon);
         },
       ),
     );
 
-    await _convertCoordinatesToAddress(lat, lon); // Panggil geocoding
+    await _convertCoordinatesToAddress(lat, lon);
     notifyListeners();
   }
 

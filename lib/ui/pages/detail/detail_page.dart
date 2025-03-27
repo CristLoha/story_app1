@@ -67,7 +67,7 @@ class StoryDetailPage extends StatelessWidget {
                                 zoomControlsEnabled: false,
                                 initialCameraPosition: CameraPosition(
                                   target: LatLng(story.lat!, story.lon!),
-                                  zoom: 14,
+                                  zoom: 18,
                                 ),
                                 markers: provider.markers,
                               );
@@ -122,6 +122,7 @@ void showFullScreenMapDialog(
                   return GoogleMap(
                     myLocationButtonEnabled: false,
                     zoomControlsEnabled: false,
+                    mapToolbarEnabled: false,
                     initialCameraPosition: CameraPosition(
                       target: LatLng(lat, lon),
                       zoom: 18,
@@ -137,49 +138,49 @@ void showFullScreenMapDialog(
             ),
             Positioned(
               top: 10,
-              right: 10,
+              left: 10,
               child: IconButtonWidget(
                 onPressed: () => context.pop(),
                 icon: Icons.close,
               ),
             ),
-            Positioned(
-              top: 100,
-              left: 20,
-              right: 20,
-              child: Consumer<GoogleMapsProvider>(
-                builder: (context, provider, _) {
-                  return provider.locationName.isNotEmpty
-                      ? Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: ColorsManager.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: ColorsManager.grey900,
-                              blurRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.location_on, color: ColorsManager.red),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                provider.locationName,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                      : const SizedBox();
-                },
-              ),
-            ),
+            // Positioned(
+            //   top: 100,
+            //   left: 20,
+            //   right: 20,
+            //   child: Consumer<GoogleMapsProvider>(
+            //     builder: (context, provider, _) {
+            //       return provider.locationName.isNotEmpty
+            //           ? Container(
+            //             padding: const EdgeInsets.all(12),
+            //             decoration: BoxDecoration(
+            //               color: ColorsManager.white,
+            //               borderRadius: BorderRadius.circular(12),
+            //               boxShadow: [
+            //                 BoxShadow(
+            //                   color: ColorsManager.grey900,
+            //                   blurRadius: 5,
+            //                 ),
+            //               ],
+            //             ),
+            //             child: Row(
+            //               mainAxisAlignment: MainAxisAlignment.center,
+            //               children: [
+            //                 Icon(Icons.location_on, color: ColorsManager.red),
+            //                 const SizedBox(width: 8),
+            //                 Expanded(
+            //                   child: Text(
+            //                     provider.locationName,
+            //                     style: const TextStyle(fontSize: 16),
+            //                   ),
+            //                 ),
+            //               ],
+            //             ),
+            //           )
+            //           : const SizedBox();
+            //     },
+            //   ),
+            // ),
             Consumer<GoogleMapsProvider>(
               builder: (context, provider, _) {
                 return Positioned(

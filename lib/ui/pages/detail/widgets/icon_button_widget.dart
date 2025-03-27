@@ -12,9 +12,23 @@ class IconButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(icon, color: ColorsManager.grey600, size: 30),
-      onPressed: onPressed,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        decoration: BoxDecoration(
+          color: ColorsManager.primary,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: ColorsManager.grey900,
+              blurRadius: 8,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.all(12),
+        child: Icon(icon, color: ColorsManager.white, size: 30),
+      ),
     );
   }
 }
