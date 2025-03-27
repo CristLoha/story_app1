@@ -28,6 +28,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        buildConfigField "String", "GOOGLE_MAPS_KEY_ANDROID", "\"${GOOGLE_MAPS_KEY_ANDROID}\""
     }
 
     buildTypes {
