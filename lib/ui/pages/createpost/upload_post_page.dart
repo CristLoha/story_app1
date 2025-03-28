@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:story_app1/static/state/upload/upload_result_state.dart';
 import 'package:story_app1/ui/widgets/circle_image_widget.dart';
 import 'package:story_app1/ui/widgets/snackbar_widget.dart';
+import 'package:story_app1/ui/widgets/title_app_bar_widget.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
-import 'package:story_app1/utils/theme_manager/style_manager.dart';
 import 'package:story_app1/utils/theme_manager/values_manager.dart';
 import 'package:story_app1/ui/pages/createpost/widgets/media_picker_button.dart';
 import 'package:story_app1/ui/pages/createpost/widgets/post_button_widget.dart';
@@ -52,10 +52,7 @@ class _PostPageState extends State<UploadPostPage> {
           icon: Icon(Icons.close, color: ColorsManager.white),
         ),
         centerTitle: false,
-        title: Text(
-          'Create Post',
-          style: getWhiteTextStyle().copyWith(fontSize: AppSize.s24),
-        ),
+        title: TitleAppBarWidget(title: 'Create Post'),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
@@ -86,6 +83,7 @@ class _PostPageState extends State<UploadPostPage> {
                         MediaPickerButtons(
                           onGalleryTap: _onGalleryView,
                           onCameraTap: _onCameraView,
+                          onLocationPick: () {},
                         ),
                       ],
                     ),

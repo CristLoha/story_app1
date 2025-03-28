@@ -5,7 +5,7 @@ import 'package:geocoding/geocoding.dart';
 class GoogleMapsProvider extends ChangeNotifier {
   late GoogleMapController _controller;
   final Set<Marker> _markers = {};
-  String _locationName = "Loading..."; // Tambahin ini buat nama lokasi
+  String _locationName = "Loading...";
 
   GoogleMapController get controller => _controller;
   Set<Marker> get markers => _markers;
@@ -53,11 +53,6 @@ class GoogleMapsProvider extends ChangeNotifier {
 
   void animateToLocation(double lat, double lon) {
     _controller.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lon), 18));
-  }
-
-  void clearLocationName() {
-    _locationName = "";
-    notifyListeners();
   }
 
   @override
