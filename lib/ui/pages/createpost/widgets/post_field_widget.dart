@@ -34,6 +34,7 @@ class PostFieldWidget extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: AppPadding.p10),
           child: TextField(
+            
             controller: _descpritionC,
             focusNode: _focusNode,
             maxLines: null,

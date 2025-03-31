@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMapsProvider extends ChangeNotifier {
   late GoogleMapController _controller;
@@ -30,6 +30,18 @@ class GoogleMapsProvider extends ChangeNotifier {
     );
 
     await _convertCoordinatesToAddress(lat, lon);
+    notifyListeners();
+  }
+
+  void addMarker(LatLng position, String id) {
+    final marker = Marker(markerId: MarkerId(id), position: position);
+    _markers.add(marker);
+    notifyListeners();
+  }
+
+  void setMarker(LatLng latLng, {String id = "source"}) {
+    _markers.clear();
+    _markers.add(Marker(markerId: MarkerId(id), position: latLng));
     notifyListeners();
   }
 

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,12 +10,18 @@ import 'package:story_app1/utils/theme_manager/color_manager.dart';
 class ShowFullScreenMapWidget extends StatelessWidget {
   final double lat;
   final double lon;
-  final String locationName;
+  final String? locationName;
+  final VoidCallback? onButtonPressed;
+  final void Function(GoogleMapController)? onMapCreated;
+    final bool myLocationEnabled;
   const ShowFullScreenMapWidget({
     super.key,
     required this.lat,
     required this.lon,
-    required this.locationName,
+    this.locationName,
+    this.onMapCreated,
+    this.onButtonPressed,
+    this.myLocationEnabled = false,
   });
 
   @override
@@ -31,12 +36,15 @@ class ShowFullScreenMapWidget extends StatelessWidget {
             child: Consumer<GoogleMapsProvider>(
               builder: (context, provider, _) {
                 return GoogleMapWidget(
+             myLocationEnabled: myLocationEnabled,
                   target: LatLng(lat, lon),
                   markers: provider.markers,
-                  onMapCreated: (controller) {
-                    provider.setController(controller);
-                    provider.setStoryLocation(lat, lon, locationName);
-                  },
+                  onMapCreated:
+                      onMapCreated ??
+                      (controller) {
+                        provider.setController(controller);
+                        provider.setStoryLocation(lat, lon, locationName!);
+                      },
                 );
               },
             ),
@@ -49,43 +57,14 @@ class ShowFullScreenMapWidget extends StatelessWidget {
               icon: Icons.close,
             ),
           ),
-          // Positioned(
-          //   top: 100,
-          //   left: 20,
-          //   right: 20,
-          //   child: Consumer<GoogleMapsProvider>(
-          //     builder: (context, provider, _) {
-          //       return provider.locationName.isNotEmpty
-          //           ? Container(
-          //             padding: const EdgeInsets.all(12),
-          //             decoration: BoxDecoration(
-          //               color: ColorsManager.white,
-          //               borderRadius: BorderRadius.circular(12),
-          //               boxShadow: [
-          //                 BoxShadow(
-          //                   color: ColorsManager.grey900,
-          //                   blurRadius: 5,
-          //                 ),
-          //               ],
-          //             ),
-          //             child: Row(
-          //               mainAxisAlignment: MainAxisAlignment.center,
-          //               children: [
-          //                 Icon(Icons.location_on, color: ColorsManager.red),
-          //                 const SizedBox(width: 8),
-          //                 Expanded(
-          //                   child: Text(
-          //                     provider.locationName,
-          //                     style: const TextStyle(fontSize: 16),
-          //                   ),
-          //                 ),
-          //               ],
-          //             ),
-          //           )
-          //           : const SizedBox();
-          //     },
-          //   ),
-          // ),
+          Positioned(
+            top: 16,
+            right: 16,
+            child: FloatingActionButton(
+              onPressed: onButtonPressed ?? () {},
+              child: const Icon(Icons.my_location),
+            ),
+          ),
           Consumer<GoogleMapsProvider>(
             builder: (context, provider, _) {
               return Positioned(

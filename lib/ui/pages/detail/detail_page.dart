@@ -80,10 +80,16 @@ class StoryDetailPage extends StatelessWidget {
                         child: IconButtonWidget(
                           icon: Icons.fullscreen,
                           onPressed:
-                              () => ShowFullScreenMapWidget(
-                                lat: story.lat!,
-                                lon: story.lon!,
-                                locationName: story.name,
+                              () => showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return ShowFullScreenMapWidget(
+                                    lat: story.lat!,
+                                    lon: story.lon!,
+                                    locationName: story.name,
+                                    
+                                  );
+                                },
                               ),
                         ),
                       ),

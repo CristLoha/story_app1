@@ -1,10 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart' as loc;
 import 'package:provider/provider.dart';
+import 'package:story_app1/providers/maps/google_maps_provider.dart';
 import 'package:story_app1/static/state/upload/upload_result_state.dart';
 import 'package:story_app1/ui/widgets/circle_image_widget.dart';
+import 'package:story_app1/ui/widgets/show_full_screen_map_widget.dart';
 import 'package:story_app1/ui/widgets/snackbar_widget.dart';
 import 'package:story_app1/ui/widgets/title_app_bar_widget.dart';
 import 'package:story_app1/utils/theme_manager/color_manager.dart';
@@ -29,6 +34,11 @@ class _PostPageState extends State<UploadPostPage> {
   @override
   void initState() {
     super.initState();
+    final provider = context.read<UploadPostProvider>();
+    _descpritionC.text = provider.description;
+    _descpritionC.addListener(() {
+      provider.setDescription(_descpritionC.text);
+    });
     Future.delayed(Duration(milliseconds: 300), () {
       _focusNode.requestFocus();
     });
@@ -83,7 +93,7 @@ class _PostPageState extends State<UploadPostPage> {
                         MediaPickerButtons(
                           onGalleryTap: _onGalleryView,
                           onCameraTap: _onCameraView,
-                          onLocationPick: () {},
+                          onLocationPick: _onLocationPick,
                         ),
                       ],
                     ),
@@ -94,7 +104,7 @@ class _PostPageState extends State<UploadPostPage> {
           ),
         ),
       ),
-      floatingActionButton: Consumer<UploadPostProvider>(
+      bottomNavigationBar: Consumer<UploadPostProvider>(
         builder: (context, provider, child) {
           final isLoading = provider.state is UploadLoadingState;
           final isButtondisabled =
@@ -102,14 +112,69 @@ class _PostPageState extends State<UploadPostPage> {
               provider.imagePath == null ||
               isLoading;
 
-          return PostButtonWidget(
-            isButtondisabled: isButtondisabled,
-            onPressed: isButtondisabled ? null : _onPostSubmit,
-            isLoading: isLoading,
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppPadding.p16,
+              vertical: AppPadding.p24,
+            ),
+            child: PostButtonWidget(
+              isButtondisabled: isButtondisabled,
+              onPressed: isButtondisabled ? null : _onPostSubmit,
+              isLoading: isLoading,
+            ),
           );
         },
       ),
     );
+  }
+
+  Future<void> _onLocationPick() async {
+    final provider = context.read<GoogleMapsProvider>();
+    final dicodingOffice = const LatLng(-6.8957473, 107.6337669);
+    await showDialog(
+      context: context,
+      builder:
+          (context) => ShowFullScreenMapWidget(
+            lat: dicodingOffice.latitude,
+            lon: dicodingOffice.longitude,
+            myLocationEnabled: true,
+            onButtonPressed: onMyLocationButtonPressed,
+            onMapCreated: (controller) {
+              provider.setController(controller);
+              provider.addMarker(dicodingOffice, 'source');
+            },
+          ),
+    );
+  }
+
+  void onMyLocationButtonPressed() async {
+    final provider = context.read<GoogleMapsProvider>();
+    final loc.Location location = loc.Location();
+    late bool serviceEnabled;
+    late loc.PermissionStatus permissionGranted;
+    late loc.LocationData locationData;
+
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == loc.PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != loc.PermissionStatus.granted) {
+        return;
+      }
+    }
+    locationData = await location.getLocation();
+    final latLng = LatLng(locationData.latitude!, locationData.longitude!);
+
+    provider.setMarker(latLng);
+
+    provider.controller.animateCamera(CameraUpdate.newLatLng(latLng));
   }
 
   Future<void> _onPostSubmit() async {
@@ -118,6 +183,7 @@ class _PostPageState extends State<UploadPostPage> {
 
     if (provider.state is UploadLoadedState) {
       provider.clearImage();
+      provider.setDescription('');
       if (mounted) {
         context.pop(true);
       }
