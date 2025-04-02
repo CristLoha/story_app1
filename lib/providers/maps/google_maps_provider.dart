@@ -1,22 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 
 class GoogleMapsProvider extends ChangeNotifier {
   late GoogleMapController _controller;
   final Set<Marker> _markers = {};
+  geo.Placemark? _placemark;
   String _locationName = "Loading...";
+  String _street = "";
+  String _address = "";
 
+  geo.Placemark? get placemark => _placemark;
+  String get street => _street;
+  String get address => _address;
   GoogleMapController get controller => _controller;
   Set<Marker> get markers => _markers;
   String get locationName => _locationName;
+
+  void updatePlacemark(Placemark place) {
+    _placemark = place;
+    _street = place.street ?? "Unknown Street";
+    _address =
+        '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+
+    notifyListeners();
+  }
 
   void setController(GoogleMapController controller) {
     _controller = controller;
     notifyListeners();
   }
 
-  void setStoryLocation(double lat, double lon, String name) async {
+  void setStoryLocation(lat, double lon, String name) async {
     _markers.clear();
     _markers.add(
       Marker(
@@ -39,9 +55,16 @@ class GoogleMapsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setMarker(LatLng latLng, {String id = "source"}) {
+  void defineMarker(
+  LatLng latLng, String street, String address) {
     _markers.clear();
-    _markers.add(Marker(markerId: MarkerId(id), position: latLng));
+    _markers.add(
+      Marker(
+        markerId: MarkerId("source"),
+        position: latLng,
+        infoWindow: InfoWindow(title: street, snippet: address),
+      ),
+    );
     notifyListeners();
   }
 

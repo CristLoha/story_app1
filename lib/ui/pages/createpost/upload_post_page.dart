@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,6 +18,7 @@ import 'package:story_app1/ui/pages/createpost/widgets/post_button_widget.dart';
 import 'package:story_app1/ui/pages/createpost/widgets/post_field_widget.dart';
 import 'package:story_app1/ui/pages/createpost/widgets/show_image_widget.dart';
 import 'package:story_app1/providers/uploadpost/upload_post_provider.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 
 class UploadPostPage extends StatefulWidget {
   const UploadPostPage({super.key});
@@ -30,6 +30,7 @@ class UploadPostPage extends StatefulWidget {
 class _PostPageState extends State<UploadPostPage> {
   final TextEditingController _descpritionC = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  geo.Placemark? placemark;
 
   @override
   void initState() {
@@ -138,13 +139,43 @@ class _PostPageState extends State<UploadPostPage> {
             lat: dicodingOffice.latitude,
             lon: dicodingOffice.longitude,
             myLocationEnabled: true,
+            showMyLocationButton: true,
             onButtonPressed: onMyLocationButtonPressed,
-            onMapCreated: (controller) {
+            onMapCreated: (controller) async {
+              final info = await geo.placemarkFromCoordinates(
+                dicodingOffice.latitude,
+                dicodingOffice.longitude,
+              );
+
+              final place = info[0];
+              final street = place.street!;
+              final adress =
+                  '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
               provider.setController(controller);
-              provider.addMarker(dicodingOffice, 'source');
+              provider.defineMarker(dicodingOffice, street, adress);
+            },
+            onLongPress: (LatLng latLng) {
+              onLongPressGoogleMap(latLng);
             },
           ),
     );
+  }
+
+  void onLongPressGoogleMap(LatLng latLng) async {
+    final provider = context.read<GoogleMapsProvider>();
+    final info = await geo.placemarkFromCoordinates(
+      latLng.latitude,
+      latLng.longitude,
+    );
+
+    final place = info[0];
+    final street = place.street!;
+    final adress =
+        '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+    provider.defineMarker(latLng, street, adress);
+
+    provider.updatePlacemark(place);
+    provider.controller.animateCamera(CameraUpdate.newLatLng(latLng));
   }
 
   void onMyLocationButtonPressed() async {
@@ -172,7 +203,17 @@ class _PostPageState extends State<UploadPostPage> {
     locationData = await location.getLocation();
     final latLng = LatLng(locationData.latitude!, locationData.longitude!);
 
-    provider.setMarker(latLng);
+    final info = await geo.placemarkFromCoordinates(
+      locationData.latitude!,
+      locationData.longitude!,
+    );
+    final place = info[0];
+    final street = place.street!;
+    final adress =
+        '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+    provider.updatePlacemark(place);
+
+    provider.defineMarker(latLng, street, adress);
 
     provider.controller.animateCamera(CameraUpdate.newLatLng(latLng));
   }

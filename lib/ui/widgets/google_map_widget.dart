@@ -6,12 +6,15 @@ class GoogleMapWidget extends StatelessWidget {
   final Set<Marker> markers;
   final Function(GoogleMapController)? onMapCreated;
   final bool myLocationEnabled;
+  final Function(LatLng)? onLongPress;
+
   const GoogleMapWidget({
     super.key,
     required this.target,
     required this.markers,
     this.onMapCreated,
     this.myLocationEnabled = false,
+    this.onLongPress,
   });
 
   @override
@@ -21,6 +24,7 @@ class GoogleMapWidget extends StatelessWidget {
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
       myLocationEnabled: myLocationEnabled,
+      onLongPress: onLongPress,
       initialCameraPosition: CameraPosition(target: target, zoom: 18),
       markers: markers,
       onMapCreated: onMapCreated,
