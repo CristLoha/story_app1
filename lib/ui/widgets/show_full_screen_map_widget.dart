@@ -113,7 +113,7 @@ class ShowFullScreenMapWidget extends StatelessWidget {
                 ),
 
               Positioned(
-                bottom: 120,
+                bottom: 185,
                 right: 16,
                 child: Column(
                   children: [

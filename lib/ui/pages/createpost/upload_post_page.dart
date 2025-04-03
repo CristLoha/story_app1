@@ -216,7 +216,7 @@ class _PostPageState extends State<UploadPostPage> {
           return Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppPadding.p16,
-              vertical: AppPadding.p36,
+              vertical: 60,
             ),
             child: PostButtonWidget(
               isButtondisabled: isButtondisabled,
