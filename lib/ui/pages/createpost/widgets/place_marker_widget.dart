@@ -5,7 +5,14 @@ import 'package:story_app1/utils/theme_manager/style_manager.dart';
 
 class PlacemarkWidget extends StatelessWidget {
   final geo.Placemark placemark;
-  const PlacemarkWidget({super.key, required this.placemark});
+  final double sizeStreetTitle;
+  final double sizeAddressTitle;
+  const PlacemarkWidget({
+    super.key,
+    required this.placemark,
+    this.sizeStreetTitle = 20,
+    this.sizeAddressTitle = 16,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +36,17 @@ class PlacemarkWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(placemark.street!, style: getGrey900TextStyle()),
+                Text(
+                  placemark.street!,
+                  style: getGrey900TextStyle().copyWith(
+                    fontSize: sizeStreetTitle,
+                  ),
+                ),
                 Text(
                   '${placemark.subLocality}, ${placemark.locality}, ${placemark.postalCode}, ${placemark.country}',
-                  style: getGrey600TextStyle(),
+                  style: getGrey600TextStyle().copyWith(
+                    fontSize: sizeAddressTitle,
+                  ),
                 ),
               ],
             ),

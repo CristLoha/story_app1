@@ -241,6 +241,10 @@ class _PostPageState extends State<UploadPostPage> {
             lon: dicodingOffice.longitude,
             myLocationEnabled: true,
             showMyLocationButton: true,
+            onCloseButtonPressed: () {
+              provider.clearLocation();
+              context.pop();
+            },
             onButtonPressed: onMyLocationButtonPressed,
             addLocation: () {
               if (provider.markers.isNotEmpty) {

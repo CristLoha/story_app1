@@ -19,6 +19,7 @@ class ShowFullScreenMapWidget extends StatelessWidget {
   final bool shouldShowPlacemark;
   final bool showMyLocationButton;
   final void Function()? addLocation;
+  final void Function()?  onCloseButtonPressed;
   const ShowFullScreenMapWidget({
     super.key,
     required this.lat,
@@ -31,6 +32,7 @@ class ShowFullScreenMapWidget extends StatelessWidget {
     this.shouldShowPlacemark = false,
     this.showMyLocationButton = false,
     this.addLocation,
+    required this.onCloseButtonPressed,
   });
 
   @override
@@ -61,10 +63,7 @@ class ShowFullScreenMapWidget extends StatelessWidget {
                 top: 10,
                 left: 10,
                 child: IconButtonWidget(
-                  onPressed: () {
-                    provider.clearLocation();
-                    context.pop();
-                  },
+                  onPressed: onCloseButtonPressed,
 
                   icon: Icons.close,
                 ),
