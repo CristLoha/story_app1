@@ -79,18 +79,21 @@ class StoryDetailPage extends StatelessWidget {
                         right: 10,
                         child: IconButtonWidget(
                           icon: Icons.fullscreen,
-                          onPressed:
-                              () => showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return ShowFullScreenMapWidget(
-                                    lat: story.lat!,
-                                    lon: story.lon!,
-                                    locationName: story.name,
-                                    
-                                  );
-                                },
-                              ),
+                          onPressed: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ShowFullScreenMapWidget(
+                                  lat: story.lat!,
+                                  lon: story.lon!,
+                                  locationName: story.name,
+                                );
+                              },
+                            );
+                            context
+                                .read<GoogleMapsProvider>()
+                                .resetForNewContext();
+                          },
                         ),
                       ),
                     ],

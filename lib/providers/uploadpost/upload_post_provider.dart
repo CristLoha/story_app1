@@ -13,6 +13,7 @@ class UploadPostProvider extends ChangeNotifier {
   String? imagePath;
   String description = '';
 
+
   final ApiService _apiService = ApiService(Client());
   final SessionManager _sessionManager = SessionManager();
   UploadResultState _state = UploadNoneState();

@@ -56,10 +56,14 @@ class _PostPageState extends State<UploadPostPage> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<UploadPostProvider>();
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () {
+            context.read<GoogleMapsProvider>().resetForNewContext();
+            context.pop();
+          },
           icon: Icon(Icons.close, color: ColorsManager.white),
         ),
         centerTitle: false,
@@ -87,6 +91,101 @@ class _PostPageState extends State<UploadPostPage> {
                         PostFieldWidget(
                           descpritionC: _descpritionC,
                           focusNode: _focusNode,
+                        ),
+
+                        Consumer<GoogleMapsProvider>(
+                          builder: (_, mapsProvider, __) {
+                            return AnimatedSwitcher(
+                              duration: Duration(milliseconds: 200),
+                              child:
+                                  mapsProvider.selectedPosition != null
+                                      ? Padding(
+                                        key: ValueKey(
+                                          'location-${mapsProvider.selectedPosition}',
+                                        ),
+                                        padding: const EdgeInsets.only(top: 8),
+                                        child: Stack(
+                                          clipBehavior: Clip.none,
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 32,
+                                                    vertical: 8,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[100],
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                border: Border.all(
+                                                  color: Colors.grey[300]!,
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    Icons.location_on,
+                                                    size: 16,
+                                                    color:
+                                                        ColorsManager.primary,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Flexible(
+                                                    child: Text(
+                                                      mapsProvider.address,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color:
+                                                            ColorsManager
+                                                                .grey900,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Positioned(
+                                              right: -10,
+                                              top: -10,
+                                              child: GestureDetector(
+                                                onTap:
+                                                    () =>
+                                                        mapsProvider
+                                                            .clearLocation(),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: ColorsManager.red,
+                                                    shape: BoxShape.circle,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color:
+                                                            ColorsManager
+                                                                .grey900,
+                                                        blurRadius: 4,
+                                                        offset: Offset(0, 2),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  padding: const EdgeInsets.all(
+                                                    4,
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.close,
+                                                    size: 20,
+                                                    color: ColorsManager.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                      : SizedBox(key: ValueKey('no-location')),
+                            );
+                          },
                         ),
                         provider.imagePath == null
                             ? SizedBox()
@@ -131,6 +230,7 @@ class _PostPageState extends State<UploadPostPage> {
 
   Future<void> _onLocationPick() async {
     final provider = context.read<GoogleMapsProvider>();
+
     final dicodingOffice = const LatLng(-6.8957473, 107.6337669);
     await showDialog(
       context: context,
@@ -141,6 +241,11 @@ class _PostPageState extends State<UploadPostPage> {
             myLocationEnabled: true,
             showMyLocationButton: true,
             onButtonPressed: onMyLocationButtonPressed,
+            addLocation: () {
+              if (provider.selectedPosition != null) {
+                context.pop(provider.selectedPosition);
+              }
+            },
             onMapCreated: (controller) async {
               final info = await geo.placemarkFromCoordinates(
                 dicodingOffice.latitude,
@@ -220,11 +325,17 @@ class _PostPageState extends State<UploadPostPage> {
 
   Future<void> _onPostSubmit() async {
     final provider = context.read<UploadPostProvider>();
-    await provider.uploadStory();
+    final mapsProvider = context.read<GoogleMapsProvider>();
+
+    await provider.uploadStory(
+      lat: mapsProvider.selectedPosition?.latitude,
+      lon: mapsProvider.selectedPosition?.longitude,
+    );
 
     if (provider.state is UploadLoadedState) {
       provider.clearImage();
       provider.setDescription('');
+      mapsProvider.clearLocation();
       if (mounted) {
         context.pop(true);
       }

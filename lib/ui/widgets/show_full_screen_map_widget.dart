@@ -18,6 +18,7 @@ class ShowFullScreenMapWidget extends StatelessWidget {
   final Function(LatLng)? onLongPress;
   final bool shouldShowPlacemark;
   final bool showMyLocationButton;
+  final void Function()? addLocation;
   const ShowFullScreenMapWidget({
     super.key,
     required this.lat,
@@ -27,13 +28,15 @@ class ShowFullScreenMapWidget extends StatelessWidget {
     this.onButtonPressed,
     this.myLocationEnabled = false,
     this.onLongPress,
-    this.shouldShowPlacemark = true,
-    this.showMyLocationButton = true,
+    this.shouldShowPlacemark = false,
+    this.showMyLocationButton = false,
+    this.addLocation,
   });
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
+
       insetPadding: EdgeInsets.zero,
       child: Consumer<GoogleMapsProvider>(
         builder: (context, provider, _) {
@@ -59,7 +62,11 @@ class ShowFullScreenMapWidget extends StatelessWidget {
                 top: 10,
                 left: 10,
                 child: IconButtonWidget(
-                  onPressed: () => context.pop(),
+                  onPressed: () {
+                    provider.resetForNewContext();
+                    context.pop();
+                  },
+                  
                   icon: Icons.close,
                 ),
               ),
@@ -81,10 +88,33 @@ class ShowFullScreenMapWidget extends StatelessWidget {
                   bottom: 16,
                   right: 16,
                   left: 16,
-                  child: PlacemarkWidget(placemark: provider.placemark!),
+                  child: Column(
+                    children: [
+                      if (provider.placemark == null)
+                        SizedBox()
+                      else ...[
+                        PlacemarkWidget(placemark: provider.placemark!),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: addLocation,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorsManager.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            "Add Location",
+                            style: TextStyle(color: ColorsManager.white),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
+
               Positioned(
-                bottom: 100,
+                bottom: 120,
                 right: 16,
                 child: Column(
                   children: [

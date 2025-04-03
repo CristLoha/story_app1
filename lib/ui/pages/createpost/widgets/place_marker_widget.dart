@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart' as geo;
+import 'package:story_app1/utils/theme_manager/color_manager.dart';
+import 'package:story_app1/utils/theme_manager/style_manager.dart';
 
 class PlacemarkWidget extends StatelessWidget {
   final geo.Placemark placemark;
@@ -11,10 +13,14 @@ class PlacemarkWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       constraints: const BoxConstraints(maxWidth: 700),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.all(Radius.circular(50)),
+        color: ColorsManager.white,
+        borderRadius: const BorderRadius.all(Radius.circular(20)),
         boxShadow: <BoxShadow>[
-          BoxShadow(blurRadius: 20, offset: Offset.zero, color: Colors.grey),
+          BoxShadow(
+            blurRadius: 20,
+            offset: Offset.zero,
+            color: ColorsManager.grey600,
+          ),
         ],
       ),
       child: Row(
@@ -23,13 +29,10 @@ class PlacemarkWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  placemark.street!,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+                Text(placemark.street!, style: getGrey900TextStyle()),
                 Text(
                   '${placemark.subLocality}, ${placemark.locality}, ${placemark.postalCode}, ${placemark.country}',
-                  style: Theme.of(context).textTheme.labelLarge,
+                  style: getGrey600TextStyle(),
                 ),
               ],
             ),

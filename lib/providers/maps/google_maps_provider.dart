@@ -11,6 +11,9 @@ class GoogleMapsProvider extends ChangeNotifier {
   String _street = "";
   String _address = "";
 
+  LatLng? get selectedPosition =>
+      _markers.isNotEmpty ? _markers.first.position : null;
+
   geo.Placemark? get placemark => _placemark;
   String get street => _street;
   String get address => _address;
@@ -55,8 +58,7 @@ class GoogleMapsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void defineMarker(
-  LatLng latLng, String street, String address) {
+  void defineMarker(LatLng latLng, String street, String address) {
     _markers.clear();
     _markers.add(
       Marker(
@@ -65,7 +67,7 @@ class GoogleMapsProvider extends ChangeNotifier {
         infoWindow: InfoWindow(title: street, snippet: address),
       ),
     );
-    notifyListeners();
+    // notifyListeners();
   }
 
   Future<void> _convertCoordinatesToAddress(double lat, double lon) async {
@@ -89,6 +91,24 @@ class GoogleMapsProvider extends ChangeNotifier {
   void animateToLocation(double lat, double lon) {
     _controller.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lon), 18));
   }
+
+  void clearLocation() {
+    _markers.clear();
+    _placemark = null;
+    _locationName = "Loading...";
+    _street = "";
+    _address = "";
+    notifyListeners();
+  }
+
+  void resetForNewContext() {
+  _markers.clear();
+  _placemark = null;
+  _locationName = "Loading...";
+  _street = "";
+  _address = "";
+
+}
 
   @override
   void dispose() {
