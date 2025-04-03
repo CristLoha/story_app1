@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app1/providers/maps/google_maps_provider.dart';
@@ -19,7 +18,7 @@ class ShowFullScreenMapWidget extends StatelessWidget {
   final bool shouldShowPlacemark;
   final bool showMyLocationButton;
   final void Function()? addLocation;
-  final void Function()?  onCloseButtonPressed;
+  final void Function()? onCloseButtonPressed;
   const ShowFullScreenMapWidget({
     super.key,
     required this.lat,
