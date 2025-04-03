@@ -8,6 +8,7 @@ import 'package:story_app1/ui/pages/home/widgets/show_image_widget.dart';
 import 'package:story_app1/ui/widgets/google_map_widget.dart';
 import 'package:story_app1/ui/widgets/show_full_screen_map_widget.dart';
 import 'package:story_app1/ui/widgets/title_app_bar_widget.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 
 class StoryDetailPage extends StatelessWidget {
   final Story story;
@@ -57,43 +58,67 @@ class StoryDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: SizedBox(
-                          height: 200,
-                          width: double.infinity,
-                          child: Consumer<GoogleMapsProvider>(
-                            builder: (context, provider, _) {
-                              return GoogleMapWidget(
+                  Consumer<GoogleMapsProvider>(
+                    builder: (context, provider, _) {
+                      return Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: SizedBox(
+                              height: 200,
+                              width: double.infinity,
+                              child: GoogleMapWidget(
                                 target: LatLng(story.lat!, story.lon!),
                                 markers: provider.markers,
-                              );
-                            },
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        right: 10,
-                        child: IconButtonWidget(
-                          icon: Icons.fullscreen,
-                          onPressed: () async {
-                            await showDialog(
-                              context: context,
-                              builder: (context) {
-                                return ShowFullScreenMapWidget(
-                                  lat: story.lat!,
-                                  lon: story.lon!,
-                                  locationName: story.name,
+                          Positioned(
+                            top: 10,
+                            right: 10,
+                            child: IconButtonWidget(
+                              icon: Icons.fullscreen,
+                              onPressed: () async {
+                                await showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return ShowFullScreenMapWidget(
+                                      lat: story.lat!,
+                                      lon: story.lon!,
+                                      locationName: story.name,
+                                      onLongPress: (LatLng latLng) async {
+                                        {
+                                          final info = await geo
+                                              .placemarkFromCoordinates(
+                                                latLng.latitude,
+                                                latLng.longitude,
+                                              );
+
+                                          final place = info[0];
+                                          final street = place.street!;
+                                          final adress =
+                                              '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+                                          provider.defineMarker(
+                                            latLng,
+                                            street,
+                                            adress,
+                                          );
+
+                                          provider.updatePlacemark(place);
+                                          provider.controller.animateCamera(
+                                            CameraUpdate.newLatLng(latLng),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  },
                                 );
                               },
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 10),
                 ],
