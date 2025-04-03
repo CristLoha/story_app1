@@ -61,7 +61,7 @@ class _PostPageState extends State<UploadPostPage> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            context.read<GoogleMapsProvider>().resetForNewContext();
+            context.read<GoogleMapsProvider>().clearLocation();
             context.pop();
           },
           icon: Icon(Icons.close, color: ColorsManager.white),
@@ -98,7 +98,8 @@ class _PostPageState extends State<UploadPostPage> {
                             return AnimatedSwitcher(
                               duration: Duration(milliseconds: 200),
                               child:
-                                  mapsProvider.selectedPosition != null
+                                  mapsProvider.isConfirmed &&
+                                          mapsProvider.selectedPosition != null
                                       ? Padding(
                                         key: ValueKey(
                                           'location-${mapsProvider.selectedPosition}',
@@ -215,7 +216,7 @@ class _PostPageState extends State<UploadPostPage> {
           return Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppPadding.p16,
-              vertical: AppPadding.p24,
+              vertical: AppPadding.p36,
             ),
             child: PostButtonWidget(
               isButtondisabled: isButtondisabled,
@@ -242,8 +243,9 @@ class _PostPageState extends State<UploadPostPage> {
             showMyLocationButton: true,
             onButtonPressed: onMyLocationButtonPressed,
             addLocation: () {
-              if (provider.selectedPosition != null) {
-                context.pop(provider.selectedPosition);
+              if (provider.markers.isNotEmpty) {
+                provider.confirmLocation();
+                context.pop(provider.markers.first.position);
               }
             },
             onMapCreated: (controller) async {

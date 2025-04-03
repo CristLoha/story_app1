@@ -7,8 +7,8 @@ import 'package:story_app1/providers/maps/google_maps_provider.dart';
 import 'package:story_app1/static/router/app_route.dart';
 import 'package:story_app1/providers/home/stories_list_provider.dart';
 import 'package:story_app1/utils/theme_manager/theme_data_manager.dart';
-import 'package:story_app1/providers/login/auth_provider.dart';
-import 'package:story_app1/providers/login/password_provider.dart';
+import 'package:story_app1/providers/auth/auth_provider.dart';
+import 'package:story_app1/providers/auth/password_provider.dart';
 import 'package:story_app1/providers/uploadpost/upload_post_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =

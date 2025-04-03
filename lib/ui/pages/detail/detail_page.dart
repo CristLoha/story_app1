@@ -90,9 +90,6 @@ class StoryDetailPage extends StatelessWidget {
                                 );
                               },
                             );
-                            context
-                                .read<GoogleMapsProvider>()
-                                .resetForNewContext();
                           },
                         ),
                       ),

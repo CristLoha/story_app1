@@ -10,9 +10,11 @@ class GoogleMapsProvider extends ChangeNotifier {
   String _locationName = "Loading...";
   String _street = "";
   String _address = "";
+  bool _isConfirmed = false;
+  bool get isConfirmed => _isConfirmed;
 
   LatLng? get selectedPosition =>
-      _markers.isNotEmpty ? _markers.first.position : null;
+      _isConfirmed && _markers.isNotEmpty ? _markers.first.position : null;
 
   geo.Placemark? get placemark => _placemark;
   String get street => _street;
@@ -67,7 +69,13 @@ class GoogleMapsProvider extends ChangeNotifier {
         infoWindow: InfoWindow(title: street, snippet: address),
       ),
     );
-    // notifyListeners();
+    _isConfirmed = false;
+    notifyListeners();
+  }
+
+  void confirmLocation(){
+    _isConfirmed = true;
+    notifyListeners();
   }
 
   Future<void> _convertCoordinatesToAddress(double lat, double lon) async {
@@ -100,15 +108,6 @@ class GoogleMapsProvider extends ChangeNotifier {
     _address = "";
     notifyListeners();
   }
-
-  void resetForNewContext() {
-  _markers.clear();
-  _placemark = null;
-  _locationName = "Loading...";
-  _street = "";
-  _address = "";
-
-}
 
   @override
   void dispose() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:story_app1/providers/login/auth_provider.dart';
+import 'package:story_app1/providers/auth/auth_provider.dart';
 import 'package:story_app1/static/state/register/register_result_state.dart';
 import 'package:story_app1/ui/widgets/button_widget.dart';
 import 'package:story_app1/ui/widgets/logo_widget.dart';
@@ -55,13 +55,12 @@ class _RegisterPageState extends State<RegisterPage> {
             Consumer<AuthProvider>(
               builder: (context, provider, _) {
                 final isLoading =
-                    provider.registerStete is RegisterLoadingState;
+                    provider.registerState is RegisterLoadingState;
 
-                provider.loginState.whenOrNull(
+                provider.registerState.whenOrNull(
                   error: (message) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       SnackbarWidget.showError(context, message);
-                      provider.resetState();
                     });
                   },
                 );
@@ -80,7 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               emailC.text,
                               passC.text,
                             );
-                            if (provider.registerStete is RegisterLoadedState) {
+                            if (provider.registerState is RegisterLoadedState) {
                               if (mounted) {
                                 navigator.go('/login');
                               }

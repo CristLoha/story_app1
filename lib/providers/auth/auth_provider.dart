@@ -15,7 +15,7 @@ class AuthProvider with ChangeNotifier {
   RegisterResultState _registerState = RegisterResultState.initial();
 
   LoginResultState get loginState => _loginState;
-  RegisterResultState get registerStete => _registerState;
+  RegisterResultState get registerState => _registerState;
 
   Future<void> checkLoginStatus() async {
     final isLoggedIn = await _sesionManager.isLoggedIn();
@@ -101,9 +101,8 @@ class AuthProvider with ChangeNotifier {
 
       if (!response.error) {
         _registerState = RegisterResultState.loaded(response.message);
-        notifyListeners();
       } else {
-        _registerState = RegisterResultState.loaded(response.message);
+        _registerState = RegisterResultState.error(response.message);
       }
     } on SocketException {
       _registerState = RegisterResultState.error(

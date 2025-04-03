@@ -36,7 +36,6 @@ class ShowFullScreenMapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-
       insetPadding: EdgeInsets.zero,
       child: Consumer<GoogleMapsProvider>(
         builder: (context, provider, _) {
@@ -63,10 +62,10 @@ class ShowFullScreenMapWidget extends StatelessWidget {
                 left: 10,
                 child: IconButtonWidget(
                   onPressed: () {
-                    provider.resetForNewContext();
+                    provider.clearLocation();
                     context.pop();
                   },
-                  
+
                   icon: Icons.close,
                 ),
               ),
