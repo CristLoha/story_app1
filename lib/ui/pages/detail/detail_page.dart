@@ -1,12 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app1/data/model/story/story.dart';
 import 'package:story_app1/providers/maps/google_maps_provider.dart';
-import 'package:story_app1/ui/pages/createpost/widgets/place_marker_widget.dart';
 import 'package:story_app1/ui/pages/home/widgets/show_image_widget.dart';
 import 'package:story_app1/ui/widgets/google_map_widget.dart';
 import 'package:story_app1/ui/widgets/title_app_bar_widget.dart';
