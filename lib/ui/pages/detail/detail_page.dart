@@ -109,11 +109,6 @@ class StoryDetailPage extends StatelessWidget {
                                 child: GoogleMapWidget(
                                   target: LatLng(story.lat!, story.lon!),
                                   markers: provider.markers,
-                                  onLongPress: (LatLng latLng) async {
-                                    {
-                                      onLongPressGoogleMap(latLng, context);
-                                    }
-                                  },
                                 ),
                               ),
                             ),
