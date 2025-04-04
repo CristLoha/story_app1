@@ -21,11 +21,38 @@ class StoryDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (story.lat != null && story.lon != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Provider.of<GoogleMapsProvider>(
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final provider = Provider.of<GoogleMapsProvider>(
           context,
           listen: false,
-        ).setStoryLocation(story.lat!, story.lon!, story.name);
+        );
+
+        try {
+          final placemarks = await geo.placemarkFromCoordinates(
+            story.lat!,
+            story.lon!,
+          );
+
+          if (placemarks.isNotEmpty) {
+            final place = placemarks[0];
+            final street = place.street ?? 'Unknown Street';
+            final address =
+                '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+
+            provider.defineMarker(
+              LatLng(story.lat!, story.lon!),
+              street,
+              address,
+            );
+
+            provider.updatePlacemark(place);
+            provider.controller.animateCamera(
+              CameraUpdate.newLatLngZoom(LatLng(story.lat!, story.lon!), 18),
+            );
+          }
+        } catch (e) {
+          debugPrint('Error while defining marker from story location: $e');
+        }
       });
     }
 
@@ -44,84 +71,64 @@ class StoryDetailPage extends StatelessWidget {
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  story.name,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(story.description, style: const TextStyle(fontSize: 16)),
-              ],
-            ),
-          ),
-          Expanded(child: ShowImageWidget(imageUrl: story.photoUrl)),
-          if (story.lat != null && story.lon != null)
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Consumer<GoogleMapsProvider>(
-                    builder: (context, provider, _) {
-                      return Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: SizedBox(
-                              height: 200,
-                              width: double.infinity,
-                              child: GoogleMapWidget(
-                                target: LatLng(story.lat!, story.lon!),
-                                markers: provider.markers,
-                                onLongPress: (LatLng latLng) async {
-                                  {
-                                    onLongPressGoogleMap(latLng, context);
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                          if (provider.placemark == null)
-                            const SizedBox()
-                          else
-                            Positioned(
-                              bottom: 16,
-                              right: 16,
-                              left: 16,
-                              child: Column(
-                                children: [
-                                  if (provider.placemark == null)
-                                    SizedBox()
-                                  else ...[
-                                    PlacemarkWidget(
-                                      placemark: provider.placemark!,
-                                      sizeStreetTitle: 16,
-                                      sizeAddressTitle: 12,
-                                    ),
-                                    const SizedBox(height: 10),
-                                  ],
-                                ],
-                              ),
-                            ),
-                        ],
-                      );
-                    },
+                  Text(
+                    story.name,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
+                  Text(story.description, style: const TextStyle(fontSize: 16)),
                 ],
               ),
             ),
-        ],
+            ShowImageWidget(imageUrl: story.photoUrl),
+            if (story.lat != null && story.lon != null)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Consumer<GoogleMapsProvider>(
+                      builder: (context, provider, _) {
+                        return Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: SizedBox(
+                                height: 200,
+                                width: double.infinity,
+                                child: GoogleMapWidget(
+                                  target: LatLng(story.lat!, story.lon!),
+                                  markers: provider.markers,
+                                  onLongPress: (LatLng latLng) async {
+                                    {
+                                      onLongPressGoogleMap(latLng, context);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -22,8 +20,6 @@ class GoogleMapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
-      myLocationButtonEnabled: !Platform.isIOS,
-
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
       myLocationEnabled: myLocationEnabled,

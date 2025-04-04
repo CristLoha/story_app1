@@ -73,7 +73,7 @@ class GoogleMapsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void confirmLocation(){
+  void confirmLocation() {
     _isConfirmed = true;
     notifyListeners();
   }

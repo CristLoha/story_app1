@@ -240,7 +240,6 @@ class _PostPageState extends State<UploadPostPage> {
             lat: dicodingOffice.latitude,
             lon: dicodingOffice.longitude,
             myLocationEnabled: true,
-            showMyLocationButton: true,
             onCloseButtonPressed: () {
               provider.clearLocation();
               context.pop();
