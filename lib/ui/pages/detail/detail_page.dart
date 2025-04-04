@@ -106,7 +106,7 @@ class StoryDetailPage extends StatelessWidget {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: SizedBox(
-                                height: 200,
+                                height: 300,
                                 width: double.infinity,
                                 child: GoogleMapWidget(
                                   target: LatLng(story.lat!, story.lon!),
