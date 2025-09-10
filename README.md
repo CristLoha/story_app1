@@ -1,16 +1,30 @@
-# story_app1
+# 📖 Story App – Flutter Intermediate Project  
 
-A new Flutter project.
+Story App adalah aplikasi berbasis **Flutter** yang dikembangkan sebagai bagian dari proyek akhir kelas [Belajar Pengembangan Aplikasi Flutter Intermediate](https://www.dicoding.com/academies/201).  
 
-## Getting Started
+Aplikasi ini memungkinkan pengguna untuk **membuat cerita dengan foto**, melihat daftar cerita, serta menampilkan detail cerita dengan tampilan modern dan interaktif.  
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## 🎥 Demo Aplikasi
+Tonton video demo Story App di YouTube:  
+👉 [Klik di sini untuk melihat demo](https://www.youtube.com/watch?v=tM_d5G_-K9Y&feature=youtu.be)  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## ✨ Fitur Utama
+- 🔑 **Autentikasi Pengguna** (login & register)  
+- 📝 **Unggah cerita** dengan teks dan gambar  
+- 🔄 **Refresh otomatis**: cerita terbaru muncul di bagian atas  
+- 📄 **Detail cerita** dengan informasi lengkap  
+- 🎞️ **Animasi widget** untuk pengalaman lebih halus  
+- 🌐 **Deklaratif navigation** dengan GoRouter (mendukung web)  
+
+---
+
+## 🛠️ Implementasi
+- ✅ Clean code dengan struktur rapi  
+- 🎨 Tampilan mengikuti standar UI/UX Flutter  
+- 📡 Loading & informasi saat berinteraksi dengan API  
+- 🚦 Navigasi modern menggunakan **GoRouter**  
+- 🖥️ Siap dioptimalkan dengan **URL Strategy** agar URL web lebih clean (tanpa hash `#`)  
