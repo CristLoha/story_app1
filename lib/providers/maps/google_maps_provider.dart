@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart' as geo;
+import 'package:location/location.dart' as loc;
 
 class GoogleMapsProvider extends ChangeNotifier {
   late GoogleMapController _controller;
@@ -100,18 +101,68 @@ class GoogleMapsProvider extends ChangeNotifier {
     _controller.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lon), 18));
   }
 
+  Future<void> updateMarkerOnLongPress(LatLng latLng) async {
+    try {
+      final info = await geo.placemarkFromCoordinates(
+        latLng.latitude,
+        latLng.longitude,
+      );
+
+      if (info.isNotEmpty) {
+        final place = info[0];
+        final street = place.street ?? 'Unknown Street';
+        final address =
+            '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+
+        defineMarker(latLng, street, address);
+        updatePlacemark(place);
+        _controller.animateCamera(CameraUpdate.newLatLng(latLng));
+      }
+    } catch (e) {
+      debugPrint("Error on long press: $e");
+    }
+  }
+
+  Future<void> moveToCurrentUserLocation() async {
+    final loc.Location location = loc.Location();
+    late bool serviceEnabled;
+    late loc.PermissionStatus permissionGranted;
+    late loc.LocationData locationData;
+
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        debugPrint("Location service is not enabled.");
+        return;
+      }
+    }
+
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == loc.PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != loc.PermissionStatus.granted) {
+        debugPrint("Location permission not granted.");
+        return;
+      }
+    }
+
+    try {
+      locationData = await location.getLocation();
+      final latLng = LatLng(locationData.latitude!, locationData.longitude!);
+      await updateMarkerOnLongPress(latLng);
+    } catch (e) {
+      debugPrint("Error getting current location: $e");
+    }
+  }
+
   void clearLocation() {
     _markers.clear();
     _placemark = null;
     _locationName = "Loading...";
     _street = "";
     _address = "";
+    _isConfirmed = false;
     notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }
