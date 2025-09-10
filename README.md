@@ -14,7 +14,8 @@ Tonton video demo Story App di YouTube:
 
 ## ✨ Fitur Utama
 - 🔑 **Autentikasi Pengguna** (login & register)  
-- 📝 **Unggah cerita** dengan teks dan gambar  
+- 📝 **Unggah cerita** dengan teks dan gambar
+- 📑 Menampilkan daftar cerita dengan **pagination**  
 - 🔄 **Refresh otomatis**: cerita terbaru muncul di bagian atas  
 - 📄 **Detail cerita** dengan informasi lengkap  
 - 🎞️ **Animasi widget** untuk pengalaman lebih halus  
